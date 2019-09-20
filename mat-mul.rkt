@@ -1,8 +1,12 @@
 #lang racket/base
 
 (require glm/factory
+         glm/geometric
          glm/mat
-         glm/vec)
+         glm/mat4
+         glm/vec
+         glm/vec4
+         racket/function)
 
 (provide (all-defined-out))
 
@@ -24,23 +28,59 @@
 (define (mat*mat m1 m2)
   (unless (= (mat-num-cols m1) (mat-num-rows m2))
     (error 'mat* "expected a matrix with ~a rows" (mat-num-cols m1)))
-  (apply (get-mat-constructor (mat-num-rows m1) (mat-num-cols m2))
-         (for/list ([vk (in-mat-rows m2)])
-           (mat*vec m1 vk))))
+  (if (and (mat4? m1) (mat4? m2))
+      (mat4*mat4 m1 m2)
+      (apply (get-mat-constructor (mat-num-rows m1) (mat-num-cols m2))
+             (for/list ([vk (in-mat-columns m2)])
+               (mat*vec m1 vk)))))
+
+(define (mat4*mat4 m1 m2)
+  (apply mat4 (for/list ([v (in-mat-rows m2)]) (mat* v m1))))
 
 (define (mat*vec m v)
   (unless ((mat-col-predicate m) v)
     (error 'mat* "expected vec~a" (mat-num-rows m)))
-  (apply (mat-row-constructor m)
-         (for/list ([mk (in-mat-columns m)])
-           (apply + (vec->list (vec* mk v))))))
+  (if (mat4? m)
+      (mat4*vec m v)
+      (apply (mat-row-constructor m)
+             (for/list ([mk (in-mat-columns m)])
+               (apply + (vec->list (vec* mk v)))))))
+
+(define (mat4*vec m v)
+  (define-values (m0 m1 m2 m3) (apply values (mat-columns m)))
+  (define-values (v0 v1 v2 v3) (apply values (vec->list v)))
+  (define Mov0 (vec4 v0))
+  (define Mov1 (vec4 v1))
+  (define Mul0 (vec* m0 Mov0))
+  (define Mul1 (vec* m1 Mov1))
+  (define Add0 (vec+ Mul0 Mul1))
+  (define Mov2 (vec4 v2))
+  (define Mov3 (vec4 v3))
+  (define Mul2 (vec* m2 Mov2))
+  (define Mul3 (vec* m3 Mov3))
+  (define Add1 (vec+ Mul2 Mul3))
+  (define Add2 (vec+ Add0 Add1))
+  Add2)
 
 (define (vec*mat v m)
   (unless ((mat-row-predicate m) v)
     (error 'mat* "expected vec~a" (mat-num-cols m)))
-  (apply (mat-col-constructor m)
-         (for/list ([mk (in-mat-rows m)])
-           (apply + (vec->list (vec* mk v))))))
+  (if (mat4? m)
+      (vec*mat4 v m)
+      (apply (mat-col-constructor m)
+             (for/list ([mk (in-mat-rows m)])
+               (apply + (vec->list (vec* mk v)))))))
+
+(define (vec*mat4 v m)
+  (define-values (m00 m01 m02 m03
+                  m10 m11 m12 m13
+                  m20 m21 m22 m23
+                  m30 m31 m32 m33) (apply values (mat->list m)))
+  (define-values (v0 v1 v2 v3) (apply values (vec->list v)))
+  (vec4 (+ (* m00 v0) (* m01 v1) (* m02 v2) (* m03 v3))
+        (+ (* m10 v0) (* m11 v1) (* m12 v2) (* m13 v3))
+        (+ (* m20 v0) (* m21 v1) (* m22 v2) (* m23 v3))
+        (+ (* m30 v0) (* m31 v1) (* m32 v2) (* m33 v3))))
 
 (define (mat*scalar m x)
   (apply (mat-constructor m) (for/list ([v (in-mat-columns m)]) (vec* v x))))
@@ -91,14 +131,14 @@
                      5.0  6.0  7.0  8.0
                      9.0 10.0 11.0 12.0
                      13.0 14.0 15.0 16.0))
-    (check equal? (mat* m (vec4 1.0 0.0 0.0 0.0)) (vec4 1.0 5.0 9.0 13.0))
-    (check equal? (mat* m (vec4 0.0 1.0 0.0 0.0)) (vec4 2.0 6.0 10.0 14.0))
-    (check equal? (mat* m (vec4 0.0 0.0 1.0 0.0)) (vec4 3.0 7.0 11.0 15.0))
-    (check equal? (mat* m (vec4 0.0 0.0 0.0 1.0)) (vec4 4.0 8.0 12.0 16.0))
-    (check equal? (mat* (vec4 1.0 0.0 0.0 0.0) m) (vec4  1.0  2.0  3.0  4.0))
-    (check equal? (mat* (vec4 0.0 1.0 0.0 0.0) m) (vec4  5.0  6.0  7.0  8.0))
-    (check equal? (mat* (vec4 0.0 0.0 1.0 0.0) m) (vec4  9.0 10.0 11.0 12.0))
-    (check equal? (mat* (vec4 0.0 0.0 0.0 1.0) m) (vec4 13.0 14.0 15.0 16.0))
+    (check equal? (mat* m (vec4 1.0 0.0 0.0 0.0)) (vec4 1.0 2.0 3.0 4.0))
+    (check equal? (mat* m (vec4 0.0 1.0 0.0 0.0)) (vec4 5.0 6.0 7.0 8.0))
+    (check equal? (mat* m (vec4 0.0 0.0 1.0 0.0)) (vec4 9.0 10.0 11.0 12.0))
+    (check equal? (mat* m (vec4 0.0 0.0 0.0 1.0)) (vec4 13.0 14.0 15.0 16.0))
+    (check equal? (mat* (vec4 1.0 0.0 0.0 0.0) m) (vec4 1.0 5.0  9.0 13.0))
+    (check equal? (mat* (vec4 0.0 1.0 0.0 0.0) m) (vec4 2.0 6.0 10.0 14.0))
+    (check equal? (mat* (vec4 0.0 0.0 1.0 0.0) m) (vec4 3.0 7.0 11.0 15.0))
+    (check equal? (mat* (vec4 0.0 0.0 0.0 1.0) m) (vec4 4.0 8.0 12.0 16.0))
     ;; (set! m (mat4 0.0 0.1 0.2 0.3
     ;;               1.0 1.1 1.2 1.3
     ;;               2.0 2.1 2.2 2.3
