@@ -30,7 +30,7 @@
   (define-values (axis0 axis1 axis2) (apply values (vec->list axis)))
   (define-values (temp0 temp1 temp2) (apply values (vec->list temp)))
 
-  (define rot (mat4 0.0))
+  (define rot (mat4))
 
   (mat-set! rot 0 0 (+ c (* temp0 axis0)))
   (mat-set! rot 1 0 (+ (* temp0 axis1) (* s axis2)))
@@ -45,10 +45,10 @@
   (mat-set! rot 2 2 (+ c (* temp2 axis2)))
 
   (define-values (m0 m1 m2 m3) (apply values (mat-columns m)))
-  (define-values (rot00 rot10 rot20 rot30
-                  rot01 rot11 rot21 rot31
-                  rot02 rot12 rot22 rot32
-                  rot03 rot13 rot23 rot33) (apply values (mat->list rot)))
+  (define-values (rot00 rot01 rot02 rot03
+                  rot10 rot11 rot12 rot13
+                  rot20 rot21 rot22 rot23
+                  rot30 rot31 rot32 rot33) (apply values (mat->list rot)))
 
   (mat4 (vec+ (vec* m0 rot00) (vec* m1 rot01) (vec* m2 rot02))
         (vec+ (vec* m0 rot10) (vec* m1 rot11) (vec* m2 rot12))
