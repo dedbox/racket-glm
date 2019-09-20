@@ -6,7 +6,9 @@
 ;;; glm/geometric.hpp
 ;;; glm/detail/func_geometric.inl
 
-(require glm/vec glm/vec3)
+(require glm/vec
+         glm/vec3
+         math/flonum)
 
 (provide (all-defined-out))
 
@@ -18,7 +20,7 @@
   (magnitude (vec- p1 p0)))
 
 (define (dot a b)
-  (apply + (vec->list (vec* a b))))
+  (flsum (vec->list (vec* a b))))
 
 (define (cross x y)
   (define-values (x.x x.y x.z) (apply values (vec->list x)))

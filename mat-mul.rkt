@@ -6,6 +6,7 @@
          glm/mat4
          glm/vec
          glm/vec4
+         math/flonum
          racket/function)
 
 (provide (all-defined-out))
@@ -44,7 +45,7 @@
       (mat4*vec m v)
       (apply (mat-row-constructor m)
              (for/list ([mk (in-mat-columns m)])
-               (apply + (vec->list (vec* mk v)))))))
+               (flsum (vec->list (vec* mk v)))))))
 
 (define (mat4*vec m v)
   (define-values (m0 m1 m2 m3) (apply values (mat-columns m)))
@@ -69,7 +70,7 @@
       (vec*mat4 v m)
       (apply (mat-col-constructor m)
              (for/list ([mk (in-mat-rows m)])
-               (apply + (vec->list (vec* mk v)))))))
+               (flsum (vec->list (vec* mk v)))))))
 
 (define (vec*mat4 v m)
   (define-values (m00 m01 m02 m03
