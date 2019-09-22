@@ -22,7 +22,8 @@
     [(a b) ((cond [(and (mat? a) (mat? b)) mat*mat]
                   [(mat? a) (if (vec? b) mat*vec mat*scalar)]
                   [(mat? b) (if (vec? a) vec*mat scalar*mat)]
-                  [else (* a b)])
+                  [(or (vec? a) (vec? b)) vec*]
+                  [else *])
             a b)]
     [(a b . cs) (mat* a (apply mat* b cs))]))
 
@@ -138,10 +139,4 @@
     (check equal? (mat* (vec4 1.0 0.0 0.0 0.0) m) (vec4 1.0 5.0  9.0 13.0))
     (check equal? (mat* (vec4 0.0 1.0 0.0 0.0) m) (vec4 2.0 6.0 10.0 14.0))
     (check equal? (mat* (vec4 0.0 0.0 1.0 0.0) m) (vec4 3.0 7.0 11.0 15.0))
-    (check equal? (mat* (vec4 0.0 0.0 0.0 1.0) m) (vec4 4.0 8.0 12.0 16.0))
-    ;; (set! m (mat4 0.0 0.1 0.2 0.3
-    ;;               1.0 1.1 1.2 1.3
-    ;;               2.0 2.1 2.2 2.3
-    ;;               3.0 3.1 3.2 3.3))
-    ;; (mat* m m)
-    ))
+    (check equal? (mat* (vec4 0.0 0.0 0.0 1.0) m) (vec4 4.0 8.0 12.0 16.0))))
