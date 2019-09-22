@@ -37,7 +37,6 @@
 (define (perspective-RH-NO fovy aspect zNear zFar)
   (define tanHalfFovy (tan (/ fovy 2.0)))
   (define m (mat4 0.0))
-
   (mat-set! m 0 0 (/ 1.0 (* aspect tanHalfFovy)))
   (mat-set! m 1 1 (/ 1.0 tanHalfFovy))
   (mat-set! m 2 2 (- (/ (+ zFar zNear) (- zFar zNear))))
