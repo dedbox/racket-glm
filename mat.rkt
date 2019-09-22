@@ -88,6 +88,11 @@
         [row (in-naturals)])
     (vec-set! vk row x)))
 
+(define (mat-set-row! m row v)
+  (for ([vk (in-vec v)]
+        [k (in-naturals)])
+    (mat-set! m row k vk)))
+
 (define (mat->list m)
   (apply append (for/list ([v (in-array (mat-data m))])
                   (sequence->list (in-array v)))))
