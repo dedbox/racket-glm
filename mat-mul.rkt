@@ -24,19 +24,18 @@
                   [(mat? b) (if (vec? a) vec*mat scalar*mat)]
                   [else (* a b)])
             a b)]
-    [(a b . cs) (apply mat* (mat* a b) cs)]))
+    [(a b . cs) (mat* a (apply mat* b cs))]))
 
 (define (mat*mat m1 m2)
   (unless (= (mat-num-cols m1) (mat-num-rows m2))
     (error 'mat* "expected a matrix with ~a rows" (mat-num-cols m1)))
-  (if (and (mat4? m1) (mat4? m2))
-      (mat4*mat4 m1 m2)
-      (apply (get-mat-constructor (mat-num-rows m1) (mat-num-cols m2))
-             (for/list ([vk (in-mat-columns m2)])
-               (mat*vec m1 vk)))))
-
-(define (mat4*mat4 m1 m2)
-  (apply mat4 (for/list ([v (in-mat-rows m2)]) (mat* v m1))))
+  (define m ((get-mat-constructor (mat-num-rows m1) (mat-num-cols m2))))
+  (for ([ai (in-mat-rows m1)]
+        [i (in-naturals)])
+    (for ([bj (in-mat-columns m2)]
+          [j (in-naturals)])
+      (mat-set! m j i (flsum (vec->list (vec* ai bj))))))
+  m)
 
 (define (mat*vec m v)
   (unless ((mat-col-predicate m) v)
