@@ -3,13 +3,15 @@
 (require glm/mat
          glm/mat4
          glm/vec
+         glm/vec2
          glm/vec3
          glm/vec4)
 
 (provide (all-defined-out))
 
 (define (get-vec-constructor len)
-  (cond [(= len 3) vec3]
+  (cond [(= len 2) vec2]
+        [(= len 3) vec3]
         [(= len 4) vec4]
         [else (error 'unsupported)]))
 
