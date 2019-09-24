@@ -16,14 +16,13 @@
            (vec4 1.0)))
 
   (test-case "test_scale"
-    (check equal? (scale (mat4 1.0) (vec3 2.0))
-           (mat4 (vec4 2.0 0.0 0.0 0.0)
-                 (vec4 0.0 2.0 0.0 0.0)
-                 (vec4 0.0 0.0 2.0 0.0)
-                 (vec4 0.0 0.0 0.0 1.0))))
+    (check equal? (scale (mat4 1) (vec3 2))
+           (mat4 (vec4 2 0 0 0)
+                 (vec4 0 2 0 0)
+                 (vec4 0 0 2 0)
+                 (vec4 0 0 0 1))))
 
   (test-case "test_rotate"
-    (define A (vec4 1.0 0.0 0.0 1.0))
-    (define R (rotate (mat4 1.0) (radians 90.0) (vec3 0.0 0.0 1.0)))
-    (check equal? (mat* R A)
-           (vec4 6.123234262925839e-17 -1.0 0.0 1.0))))
+    (define A (vec4 1 0 0 1))
+    (define R (rotate (mat4 1) (radians 90) (vec3 0 0 1)))
+    (check equal? (mat* R A) (vec4 6.123234262925839e-17 1 0 1))))

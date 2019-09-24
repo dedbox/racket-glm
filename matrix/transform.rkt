@@ -8,7 +8,6 @@
 
 (require glm/geometric
          glm/mat
-         glm/mat4
          glm/vec)
 
 (provide (all-defined-out))
@@ -25,7 +24,7 @@
   (define s (sin angle))
 
   (define axis (normalize v))
-  (define temp (vec* (- 1.0 c) axis))
+  (define temp (vec* (- 1 c) axis))
 
   (define-values (axis0 axis1 axis2) (apply values (vec->list axis)))
   (define-values (temp0 temp1 temp2) (apply values (vec->list temp)))

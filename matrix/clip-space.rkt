@@ -7,7 +7,6 @@
 ;;; glm/ext/matrix_clip_space.inl
 
 (require glm/mat
-         glm/mat4
          glm/trigonometric)
 
 (provide (all-defined-out))

@@ -7,7 +7,6 @@
 ;;; glm/detail/func_geometric.inl
 
 (require glm/vec
-         glm/vec3
          math/flonum)
 
 (provide (all-defined-out))
