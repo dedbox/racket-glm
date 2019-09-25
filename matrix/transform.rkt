@@ -22,36 +22,29 @@
 (define (rotate m angle v)
   (define c (cos angle))
   (define s (sin angle))
-
-  (define axis (normalize v))
+  (define axis (normalize (vec3 v)))
   (define temp (vec* (- 1 c) axis))
-
   (define-values (axis0 axis1 axis2) (apply values (vec->list axis)))
   (define-values (temp0 temp1 temp2) (apply values (vec->list temp)))
-
-  (define rot (mat4))
-
-  (mat-set! rot 0 0 (+ c (* temp0 axis0)))
-  (mat-set! rot 1 0 (+ (* temp0 axis1) (* s axis2)))
-  (mat-set! rot 2 0 (- (* temp0 axis2) (* s axis1)))
-
-  (mat-set! rot 0 1 (- (* temp1 axis0) (* s axis2)))
-  (mat-set! rot 1 1 (+ c (* temp1 axis1)))
-  (mat-set! rot 2 1 (+ (* temp1 axis2) (* s axis0)))
-
-  (mat-set! rot 0 2 (+ (* temp2 axis0) (* s axis1)))
-  (mat-set! rot 1 2 (- (* temp2 axis1) (* s axis0)))
-  (mat-set! rot 2 2 (+ c (* temp2 axis2)))
-
+  (define Rotate (mat4))
+  (mat-set! Rotate 0 0 (+ c (* temp0 axis0)))
+  (mat-set! Rotate 1 1 (+ c (* temp1 axis1)))
+  (mat-set! Rotate 2 2 (+ c (* temp2 axis2)))
+  (mat-set! Rotate 1 0 (+ (* temp0 axis1) (* s axis2)))
+  (mat-set! Rotate 2 0 (- (* temp0 axis2) (* s axis1)))
+  (mat-set! Rotate 0 1 (- (* temp1 axis0) (* s axis2)))
+  (mat-set! Rotate 2 1 (+ (* temp1 axis2) (* s axis0)))
+  (mat-set! Rotate 0 2 (+ (* temp2 axis0) (* s axis1)))
+  (mat-set! Rotate 1 2 (- (* temp2 axis1) (* s axis0)))
   (define-values (m0 m1 m2 m3) (apply values (mat-columns m)))
-  (define-values (rot00 rot10 rot20 rot30
-                  rot01 rot11 rot21 rot31
-                  rot02 rot12 rot22 rot32
-                  rot03 rot13 rot23 rot33) (apply values (mat->list rot)))
-
-  (mat4 (vec+ (vec* m0 rot00) (vec* m1 rot01) (vec* m2 rot02))
-        (vec+ (vec* m0 rot10) (vec* m1 rot11) (vec* m2 rot12))
-        (vec+ (vec* m0 rot20) (vec* m1 rot21) (vec* m2 rot22))
+  (define-values (Rotate00 Rotate10 Rotate20 Rotate30
+                  Rotate01 Rotate11 Rotate21 Rotate31
+                  Rotate02 Rotate12 Rotate22 Rotate32
+                  Rotate03 Rotate13 Rotate23 Rotate33)
+    (apply values (mat->list Rotate)))
+  (mat4 (vec+ (vec* m0 Rotate00) (vec* m1 Rotate01) (vec* m2 Rotate02))
+        (vec+ (vec* m0 Rotate10) (vec* m1 Rotate11) (vec* m2 Rotate12))
+        (vec+ (vec* m0 Rotate20) (vec* m1 Rotate21) (vec* m2 Rotate22))
         m3))
 
 (define (scale m v)
