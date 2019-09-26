@@ -82,7 +82,12 @@
   (define-values (s.x s.y s.z) (apply values (vec->list s)))
   (define-values (u.x u.y u.z) (apply values (vec->list u)))
   (define-values (f.x f.y f.z) (apply values (vec->list f)))
-  (define m (mat4 1.0))
+  ;; (mat4 s.x s.y s.z 0
+  ;;       u.x u.y u.z 0
+  ;;       (- f.x) (- f.y) (- f.z) 0
+  ;;       (- (dot s eye)) (- (dot u eye)) (dot u eye) 1)
+
+  (define m (mat4))
   (mat-set! m 0 0 s.x)
   (mat-set! m 0 1 s.y)
   (mat-set! m 0 2 s.z)
@@ -95,6 +100,8 @@
   (mat-set! m 0 3 (- (dot s eye)))
   (mat-set! m 1 3 (- (dot u eye)))
   (mat-set! m 2 3 (dot f eye))
-  m)
+  m
+
+  )
 
 (define look-at look-at-RH)
