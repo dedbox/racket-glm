@@ -38,7 +38,11 @@
        [(#t #f) (fprintf port "#<vec~a>" (vec-length v))]
        [(1 0)
         (define printer (if (pretty-printing) pretty-print print))
-        (printer `(,(vec-name v) ,@(vec->list v)) port mode)]))])
+        (printer `(,@(if (<= (vec-length v) 4)
+                         (list (vec-name v))
+                         `(vec #:length ,(vec-length v)))
+                   ,@(vec->list v))
+                 port mode)]))])
 
 (define/contract (vec #:length [len #f] . as)
   (->* () (#:length (or/c exact-nonnegative-integer? #f))

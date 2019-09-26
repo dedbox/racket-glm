@@ -41,7 +41,12 @@
      (case mode
        [(#t #f) (fprintf port "#<~a>" (mat-name m))]
        [(1) ((if (pretty-printing) pretty-print print)
-             `(,(mat-name m) ,@(mat-columns m)) port mode)]
+             `(,@(if (and (>= (mat-num-rows m) 2) (<= (mat-num-rows m) 4)
+                          (>= (mat-num-cols m) 2) (<= (mat-num-cols m) 4))
+                     (list (mat-name m))
+                     `(mat #:rows ,(mat-num-rows m)
+                           #:cols ,(mat-num-cols m)))
+               ,@(mat-columns m)) port mode)]
        [(0)
         (define (stringify x)
           (if (rational? x)
