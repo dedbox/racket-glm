@@ -1,6 +1,7 @@
 #lang racket/base
 
 (require (except-in ffi/unsafe ->)
+         ffi/vector
          racket/contract
          racket/flonum
          racket/function
@@ -87,10 +88,6 @@
   (-> vec? symbol?)
   (string->symbol (format "vec~a" (vec-length v))))
 
-(define/contract ((vec-predicate v) a)
-  (-> vec? predicate/c)
-  (and (vec? a) (= (vec-length a) length)))
-
 (define (vec-ref v i)
   (array-ref (vec-data v) i))
 
@@ -100,6 +97,10 @@
 (define/contract (vec->list v)
   (-> vec? (listof flonum?))
   (sequence->list (in-array (vec-data v))))
+
+(define/contract (vec->f32vector v)
+  (-> vec? f32vector?)
+  (apply f32vector (vec->list v)))
 
 (define/contract (in-vec v)
   (-> vec? sequence?)
