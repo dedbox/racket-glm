@@ -3,7 +3,6 @@
 (require (except-in ffi/unsafe ->)
          ffi/vector
          racket/contract
-         racket/flonum
          racket/function
          racket/generic
          racket/list
@@ -12,7 +11,8 @@
          (for-syntax racket/base
                      racket/syntax))
 
-(provide (all-defined-out))
+(provide (all-defined-out)
+         (for-syntax (all-defined-out)))
 
 (define (_vec len) (_array _float len))
 
