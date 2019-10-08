@@ -264,9 +264,11 @@
                    [(mat? a) (mat-vec a b)]
                    [(mat? b) (vec-mat a b)]
                    [else (vec-op a b)])]
-      [(m . as) (for/fold ([n (mat-copy m)])
-                          ([a (in-list as)])
-                  (mat-binop n a))]))
+      [(a . bs) (for/fold ([x (cond [(mat? a) (mat-copy a)]
+                                    [(vec? a) (vec-copy a)]
+                                    [else a])])
+                          ([y (in-list bs)])
+                  (mat-binop x y))]))
   (apply mat-binop args))
 
 (define mat+ (make-mat-binop '+ + vec+ 0))
