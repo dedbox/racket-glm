@@ -1,91 +1,57 @@
 #lang scribble/manual
 
-@title{The OpenGL Math Library}
+@title{OpenGL Mathematics (GLM) for Racket}
 @author{@author+email["Eric Griffis" "dedbox@gmail.com"]}
 
-@; -----------------------------------------------------------------------------
-@; Other Docs
+@require{./glm-includes.rkt}
 
-@define[C-types
-  @secref["types" #:doc '(lib "scribblings/foreign/foreign.scrbl")]]
+@require[scribble/example]
 
 @; -----------------------------------------------------------------------------
 @; External Limks
 
-@define[glm.g-truc.net
-  @hyperlink[
-    "https://glm.g-truc.net"
-    ]{glm.g-truc.net}]
+@deflink[GLM]{https://glm.g-truc.net}
+@deflink[OpenGL-Mathematics-<GLM>]{https://glm.g-truc.net}
+@deflink[OpenGL-Shading-Language-<GLSL>]{https://www.khronos.org/registry/OpenGL/index_gl.php}
 
-@define[version-4.2
-  @hyperlink[
-    "http://www.opengl.org/registry/doc/GLSLangSpec.4.20.8.clean.pdf"
-    ]{version 4.2}]
+@deflink[swizzling]{https://www.khronos.org/opengl/wiki/Data_Type_(GLSL)#Swizzling}
+@define[swizzling. @list[swizzling "."]]
 
 @; #############################################################################
 
-OpenGL Mathematics (GLM)
+@emph{OpenGL Mathematics (GLM) for Racket} is a Racket port of
+@OpenGL-Mathematics-<GLM>, a mathematics library for graphics software based
+on the @OpenGL-Shading-Language-<GLSL> specifications.
 
-@glm.g-truc.net
+GLM for Racket provides @GLM's core functions and data types along with
+support for popular Racket idioms such as sequence-based looping, variadic
+keyword-based constructors, and @racket[match]-based de-structuring.
 
-@defmodule[glm]
+@table-of-contents[]
 
-@section{Core features}
+@; =============================================================================
 
-Features that implement in Racket the GLSL specification as closely as
-possible.
+@section{Swizzling}
 
-The GLM core consists of @C-types that mirror GLSL types and Racket functions
-that mirror the GLSL functions.
+@defmodulelang[glm/swizzle]
 
-The best documentation for the GLM Core is the current GLSL specification,
-@list[version-4.2].
+The @racketmodname[glm/swizzle] meta-language customizes the syntax of
+identifiers to enable component @swizzling.
 
-To use the GLM core, @racket[require] @racketmodname[glm].
+@codeblock{
+  #lang glm/swizzle racket/base
 
-@subsection{Vector types}
+  (define v (vec4 1 2 3 4))
 
-Vector types of two to four components with an exhaustive set of operators.
+  v.x ;; expands to (vec-ref v 0)
+  v.xy ;; expands to (vec2 (vec-ref v 0) (vec-ref v 1))
+}
 
-@subsubsection{Vector types with precision qualifiers}
+All of the bindings exported by @racketmodname[glm/vector-types] are available
+whenever @swizzling is enabled.
 
-Vector types with precision qualifiers which may result in various precision
-in terms of ULPs.
+@; =============================================================================
 
-GLSL allows defining qualifiers for particular variables. With OpenGL's GLSL,
-these qualifiers have no effect; they are for compatibility. With OpenGL ES's
-GLSL, these qualifiers do have an effect.
+@include-section{./glm-core.scrbl}
 
-@subsection{Matrix types}
-
-Matrix types with C columns and R rows where C and R are values between 2 to 4
-included. These types have exhauseive sets of operators.
-
-@subsubsection{Matrix types with precision qualifiers}
-
-Matrix types with precision qualifiers which may result in various precision
-in term of ULPs.
-
-GLSL allows defining qualifiers for particular variables. With OpenGL's GLSL,
-these qualifiers have no effect; they are for compatibility. With OpenGL ES's
-GLSL, these qualifiers do have an effect.
-
-@section{Stable extensions}
-
-Additional features not specified by GLSL specification.
-
-EXT extensions are fully tested and documented.
-
-Even if it's highly unrecommended, it's possible to include all the extensions
-at once by importing @racketmodname[glm/ext]. Otherwise, each extension needs
-to be imported from a specific module.
-
-@section{Recommended extensions}
-
-Additional features not specified by GLSL specification.
-
-GTC extensions aim to be stable with tests and documentation.
-
-Even if it's highly unrecommended, it's possible to include all the extensions
-at once by importing @racketmodname[glm/ext]. Otherwise, each extension needs
-to be imported from a specific module.
+@close-eval[glm-evaluator]

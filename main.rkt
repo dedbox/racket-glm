@@ -1,19 +1,6 @@
-#lang reprovide
+#lang racket/base
 
-glm/operators
-glm/geometric
-glm/matrix
-glm/matrix/clip-space
-glm/matrix/transform
-glm/trigonometric
+(require glm/private/reprovide)
 
-;;; vector types
-
-glm/ivec
-glm/uvec
-glm/vec
-
-;;; matrix types
-
-glm/mat
-glm/mat-div
+(reprovide glm/matrix-types
+           glm/vector-types)
