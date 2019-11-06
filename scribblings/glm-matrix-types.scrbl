@@ -40,10 +40,10 @@
 @define[_M @var[M]]
 @define[_N @var[N]]
 
-@define[M×1 @list[@_M "×1"]]
-@define[M×L @list[@_M "×" @L]]
+@define[1×M @list["1×" @_M]]
+@define[L×M @list[@L "×" @_M]]
 @define[M×M @list[@_M "×" @_M]]
-@define[M×N @list[@_M "×" @_N]]
+@define[N×M @list[@_N "×" @_M]]
 
 @; #############################################################################
 
@@ -70,8 +70,8 @@ number of components, and each pair of consecutive @components are @racket[=].
 }
 
 @defproc[
-  (mat [#:rows M exact-positive-integer?]
-       [#:cols N (or/c exact-positive-integer? #f) #f]
+  (mat [#:cols N (or/c exact-positive-integer? #f) #f]
+       [#:rows M exact-positive-integer?]
        [#:fill fill (or/c real? #f) 0]
        [x (or/c mat? vec? real?)] ...) mat?
 ]{
@@ -83,36 +83,36 @@ number of components, and each pair of consecutive @components are @racket[=].
     (mat #:rows 3 1 2 3 4 5 6)
   ]
 
-  When no @xs are given, the result is an @M×N @matrix with 1's along its
-  diagonal and 0's everywhere else.
+  When no @xs are given, the result is an @N×M (cols×rows) @matrix with 1's
+  along its diagonal and 0's everywhere else.
 
   @example[
-    (mat #:rows 2 #:cols 3)
-    (mat #:rows 3 #:cols 2)
+    (mat #:cols 3 #:rows 2)
+    (mat #:cols 2 #:rows 3)
   ]
 
   When @_N is given and the @xs consist of a lone scalar value @_x, the result
-  is an @M×N @matrix with @_x along its diagonal and @var[fill] everywhere
+  is an @N×M @matrix with @_x along its diagonal and @var[fill] everywhere
   else.
 
   @example[
-    (mat #:rows 2 #:cols 3 -1/2)
+    (mat #:cols 3 #:rows 2 -1/2)
   ]
 
-  If the lone @_x is a @matrix, the result is an @M×N @matrix with @_x
+  If the lone @_x is a @matrix, the result is an @N×M @matrix with @_x
   embedded in its upper-left corner.
 
   @example[
-    (mat #:rows 4 #:cols 3 #:fill -3 (mat #:rows 2 2))
-    (mat #:rows 2 #:cols 3 #:fill -3 (mat #:rows 4 2))
+    (mat #:cols 3 #:rows 4 #:fill -3 (mat #:rows 2 2))
+    (mat #:cols 3 #:rows 2 #:fill -3 (mat #:rows 4 2))
   ]
 
   When @_N = @length-of-the-xs, each of the @xs becomes the sole argument to a
   column @vector constructor.
 
   @example[
-    (mat #:rows 2 #:cols 3 9 8 7)
-    (mat #:rows 3 #:cols 2 (vec2 1 2) (vec3 3 4 5))
+    (mat #:cols 3 #:rows 2 9 8 7)
+    (mat #:cols 2 #:rows 3 (vec2 1 2) (vec3 3 4 5))
   ]
 
   When @_N is @racket[#f] and @length-of-the-xs ≤ 1, the result is an @M×M
@@ -123,14 +123,14 @@ number of components, and each pair of consecutive @components are @racket[=].
     (mat #:rows 3 2)
   ]
 
-  If 2 ≤ @length-of-the-xs ≤ @_M, the result is an @M×1 matrix.
+  If 2 ≤ @length-of-the-xs ≤ @_M, the result is an @1×M matrix.
 
   @example[
     (mat #:rows 3 1 2)
   ]
 
-  If @L = @length-of-the-xs > @_M, the result is an @M×L' matrix, where @L' =
-  @L mod @_M + (0 if @_M divides @L else 1).
+  If @L = @length-of-the-xs > @_M, the result is an @L'×@_M matrix, where @L'
+  = @L mod @_M + (0 if @_M divides @L else 1).
 
   @example[
     (mat #:rows 2 1 2 3 4)
@@ -145,27 +145,27 @@ number of components, and each pair of consecutive @components are @racket[=].
       [(mat x y z r g b) (list (list r g b) (list x y z))])
   ]
 
-  Optional @racket[#:rows] or @racket[#:cols] patterns may be given, and
+  Optional @racket[#:cols] or @racket[#:rows] patterns may be given, and
   @matrices of indeterminate length can be matched with a final
   @racket[#:rest] pattern.
 
   @example[
     (match (mat #:rows 3 1 2 3 4 5 6)
-      [(mat #:rows rows #:cols cols x y z #:rest rgb)
-       (list rows cols rgb x y z)])
+      [(mat #:cols cols #:rows rows x y z #:rest rgb)
+       (list cols rows rgb x y z)])
   ]
 
   @example[
     (match (mat #:rows 3 1 2 3 4 5 6)
-      [(mat #:rows rows #:cols cols #:rest _) (* rows cols)])
+      [(mat #:cols cols #:rows rows #:rest _) (* cols rows)])
   ]
 }
 
 @defproc[(make-mat [data array?]
-                   [num-rows exact-positive-integer?]
-                   [num-cols exact-positive-integer?]) mat?]{
+                   [num-cols exact-positive-integer?]
+                   [num-rows exact-positive-integer?]) mat?]{
 
-  Constructs a fresh @matrix on the first @var[num-rows]×@var[num-cols]
+  Constructs a fresh @matrix on the first @var[num-cols]×@var[num-rows]
   @components of some existing @var[data]. The array is not copied; the new
   Racket representation is backed by the existing C representation.
 
@@ -191,25 +191,25 @@ number of components, and each pair of consecutive @components are @racket[=].
 }
 
 @deftogether[(
-@defproc[(mat-num-rows [m mat?]) exact-positive-integer?]
-@defproc[(mat-num-cols [m mat?]) exact-positive-integer?]
 @defproc[(mat-length   [m mat?]) exact-positive-integer?]
+@defproc[(mat-num-cols [m mat?]) exact-positive-integer?]
+@defproc[(mat-num-rows [m mat?]) exact-positive-integer?]
 )]{
 
-  Returns the number of rows or columns in @_m.
+  Returns the number of columns or rows in @_m.
 
   Example:
   @example[
     (define m (mat #:rows 2 1 2 3 4 5 6))
     m
-    (mat-num-rows m)
-    (mat-num-cols m)
     (mat-length m)
+    (mat-num-cols m)
+    (mat-num-rows m)
   ]
 }
 
-@defproc[(make-mat-data [num-rows exact-positive-integer?]
-                        [num-cols exact-positive-integer?]
+@defproc[(make-mat-data [num-cols exact-positive-integer?]
+                        [num-rows exact-positive-integer?]
                         [x real?] ...+) array?]{
 
   Allocates a 2-D array of @racket[_float]s that works with @racket[array-ref]
@@ -217,7 +217,7 @@ number of components, and each pair of consecutive @components are @racket[=].
 
   Example:
   @example[
-    (array-ref (make-mat-data 2 3 1 2 3 4 5 6) 2 1)
+    (array-ref (make-mat-data 3 2 1 2 3 4 5 6) 2 1)
   ]
 }
 
@@ -241,15 +241,15 @@ number of components, and each pair of consecutive @components are @racket[=].
   Example:
   @example[
     (mat-name (mat #:rows 5))
-    (mat-name (mat #:rows 4 #:cols 5))
-    (mat-name (mat #:rows 5 #:cols 4))
+    (mat-name (mat #:cols 5 #:rows 4))
+    (mat-name (mat #:cols 4 #:rows 5))
   ]
 }
 
 @defproc*[(
 [(mat-ref [m mat?]
-          [row exact-nonnegative-integer?]
-          [col exact-nonnegative-integer?]) vec?]
+          [col exact-nonnegative-integer?]
+          [row exact-nonnegative-integer?]) vec?]
 [(mat-ref [m mat?] [i exact-nonnegative-integer?]) vec?]
 )]{
 
@@ -260,7 +260,7 @@ number of components, and each pair of consecutive @components are @racket[=].
     (define m (mat #:rows 2 1 2 3 4 5 6))
     m
     (mat-ref m 5)
-    (mat-ref m 1 2)
+    (mat-ref m 2 1)
   ]
 }
 
@@ -293,20 +293,19 @@ number of components, and each pair of consecutive @components are @racket[=].
 
 @defproc*[(
 [(mat-set! [m mat?]
-           [row exact-nonnegative-integer?]
            [col exact-nonnegative-integer?]
+           [row exact-nonnegative-integer?]
            [x real?]) void?]
 [(mat-set! [m mat?] [i exact-nonnegative-integer?] [x real?]) void?]
 )]{
 
-  Changes the @var[col]×@racket[(mat-num-rows m)]+@var[row]th or @ith
-  @component of @_m to @_x.
+  Changes a @component of @_m to @_x.
 
   Example:
   @example[
     (define m (mat #:rows 2 1 2 3 4 5 6))
     (mat-set! m 5 -1)
-    (mat-set! m 0 2 -2)
+    (mat-set! m 2 0 -2)
     m
   ]
 }
@@ -336,20 +335,20 @@ number of components, and each pair of consecutive @components are @racket[=].
 }
 
 @deftogether[(
-@defproc[(mat->list [m mat?]) (listof real?)]
-@defproc[(mat-rows [m mat?]) (listof vec?)]
 @defproc[(mat-columns [m mat?]) (listof vec?)]
+@defproc[(mat-rows [m mat?]) (listof vec?)]
+@defproc[(mat->list [m mat?]) (listof real?)]
 )]{
 
-  Returns the @component values, rows, or columns of @_m.
+  Returns the @component columns, rows, or values of @_m.
 
   Example:
   @example[
     (define m (mat #:rows 3 1 2 3 4 5 6))
     m
-    (mat->list m)
-    (mat-rows m)
     (mat-columns m) 
+    (mat-rows m)
+    (mat->list m)
   ]
 
   @racket[mat-columns] is also a @racket[match] pattern identifier for
@@ -418,7 +417,7 @@ number of components, and each pair of consecutive @components are @racket[=].
 
 @deftogether[(
 @defform[
-  (for/mat #:rows length-expr maybe-cols maybe-fill
+  (for/mat maybe-cols #:rows length-expr maybe-fill
       (for-clause ...)
     body-or-break ... body)
   #:grammar ([maybe-cols (code:line)
@@ -427,7 +426,7 @@ number of components, and each pair of consecutive @components are @racket[=].
                          (code:line #:fill length-expr)])
 ]
 @defform[
-  (for*/mat #:rows length-expr maybe-cols maybe-fill
+  (for*/mat maybe-cols #:rows length-expr maybe-fill
       (for-clause ...)
     body-or-break ... body)
 ]
@@ -437,7 +436,9 @@ number of components, and each pair of consecutive @components are @racket[=].
   accumulated into a @matrix instead of a list.
 
   @example[
-    (for/mat #:rows 2 ([i (in-range 6)]) (add1 i))
+    (for/mat #:rows 2
+        ([i (in-range 6)])
+      (add1 i))
     (for*/mat #:rows 3
         ([i (in-range 2)]
          [j (in-range 3)])
@@ -448,21 +449,25 @@ number of components, and each pair of consecutive @components are @racket[=].
   of the result @matrix.
 
   @example[
-    (for/mat #:rows 3 #:cols 5 ([x (in-range 5)]) (* x x))
+    (for/mat #:cols 5 #:rows 3
+        ([x (in-range 5)])
+      (* x x))
   ]
 
   If the optional @racket[#:fill] clause is specified, it determines the value
   of any unspecified @components.
 
   @example[
-    (for/mat #:rows 3 #:fill -1 ([x (in-range 4)]) x)
+    (for/mat #:rows 3 #:fill -1
+        ([x (in-range 4)])
+      x)
   ]
 }
 
 @deftogether[(
-@defproc[(mat-predicate [m mat?]) predicate/c]
-@defproc[(mat-row-predicate [m mat?]) predicate/c]
 @defproc[(mat-column-predicate [m mat?]) predicate/c]
+@defproc[(mat-row-predicate [m mat?]) predicate/c]
+@defproc[(mat-predicate [m mat?]) predicate/c]
 )]{
 
   Returns a predicate function that returns @racket[#t] when applied to a
@@ -470,7 +475,7 @@ number of components, and each pair of consecutive @components are @racket[=].
 
   Example:
   @example[
-    (define m (mat #:rows 4 #:cols 5))
+    (define m (mat #:cols 5 #:rows 4))
     (define mat4x5? (mat-predicate m))
     (define vec5? (mat-row-predicate m))
     (mat4x5? m)
@@ -480,9 +485,9 @@ number of components, and each pair of consecutive @components are @racket[=].
 }
 
 @deftogether[(
-@defproc[(mat-constructor [m mat?]) (unconstrained-domain-> mat?)]
-@defproc[(mat-row-constructor [m mat?]) (unconstrained-domain-> vec?)]
 @defproc[(mat-column-constructor [m mat?]) (unconstrained-domain-> vec?)]
+@defproc[(mat-row-constructor [m mat?]) (unconstrained-domain-> vec?)]
+@defproc[(mat-constructor [m mat?]) (unconstrained-domain-> mat?)]
 )]{
 
   Returns a constructor function for @matrices or @vectors with the same
@@ -490,7 +495,7 @@ number of components, and each pair of consecutive @components are @racket[=].
 
   Example:
   @example[
-    (define m (mat #:rows 4 #:cols 5))
+    (define m (mat #:cols 5 #:rows 4))
     (define mat4x5 (mat-constructor m))
     (define vec5 (mat-row-constructor m))
     (mat4x5)
@@ -505,19 +510,10 @@ number of components, and each pair of consecutive @components are @racket[=].
   Example:
   @example[
     (define m (mat #:rows 2 1 2 3 4 5 6))
+    m
     (mat=! m (mat #:rows 2 9 8 7 6 5 4))
     m
   ]
-
-  @; @example[
-  @;   (mat=! m (mat #:rows 2 -1 -2 -3 -4))
-  @;   m
-  @; ]
-
-  @; @example[
-  @;   (mat=! m (mat #:rows 3 #:cols 1 0))
-  @;   m
-  @; ]
 }
 
 @deftogether[(
@@ -559,14 +555,14 @@ number of components, and each pair of consecutive @components are @racket[=].
   the result is stored in @racket[m].
 
   @example[
-    (define m (mat #:rows 2 #:cols 3 1 2 3))
+    (define m (mat #:cols 3 #:rows 2 1 2 3))
     m
-    (mat+=! m (mat #:rows 2 #:cols 3 10 10 10))
+    (mat+=! m (mat #:cols 3 #:rows 2 10 10 10))
     m
   ]
 
   @example[
-    (mat-=! m (mat #:rows 2 #:cols 3 1 2 3))
+    (mat-=! m (mat #:cols 3 #:rows 2 1 2 3))
     m
   ]
 
@@ -616,14 +612,15 @@ number of components, and each pair of consecutive @components are @racket[=].
   ]
 }
 
-@defproc[(_mat [rows exact-positive-integer?] [cols exact-positive-integer?]) ctype?]{
+@defproc[(_mat [cols exact-positive-integer?]
+               [rows exact-positive-integer?]) ctype?]{
 
   Creates a @matrix type whose Racket representation is an array that works
   with @racket[array-ref] and @racket[array-set!].
 
 }
 
-@defform[(define-mat-type id #:rows M #:cols N)]{
+@defform[(define-mat-type id #:cols N #:rows M)]{
 
   Binds variables related to @matrices of specific dimensions.
 
@@ -631,24 +628,24 @@ number of components, and each pair of consecutive @components are @racket[=].
 
   @itemlist[
 
-    @item{@var[id], a @matrix constructor function that takes up to @M×N
+    @item{@var[id], a @matrix constructor function that takes up to @N×M
     arguments and returns a new @matrix.}
 
     @item{@var[id]?, a predicate procedure that returns @racket[#t] for
-    @matrices with @_M rows and @_N columns, and @racket[#f] for any other
+    @matrices with @_N columns and @_M rows, and @racket[#f] for any other
     value.}
 
   ]
 
   Example:
   @example[
-    (define-mat-type mat5 #:rows 5 #:cols 5)
+    (define-mat-type mat5 #:cols 5 #:rows 5)
     (mat5? (mat5))
     (mat5? (mat #:rows 3))
   ]
 
   @var[id] is also a @racket[match] patterns similar to @racket[mat], except
-  it only matches @matrices with exactly @_M rows and @_N columns.
+  it only matches @matrices with exactly @_N columns and @_M rows.
 
   @example[
     (match (mat5 1 2 3 4 5)
@@ -722,15 +719,15 @@ Two-dimensional arrays of 64-bit floating point numbers.
 @defproc[(dmat? [m any/c]) boolean?]
 
 @defproc[
-  (dmat [#:rows M exact-positive-integer?]
-        [#:cols N (or/c exact-positive-integer? #f) #f]
+  (dmat [#:cols N (or/c exact-positive-integer? #f) #f]
+        [#:rows M exact-positive-integer?]
         [#:fill fill (or/c real? #f) 0]
         [x (or/c dmat? dvec? real?)] ...) dmat?
 ]
 
 @defproc[(make-dmat [data array?]
-                    [num-rows exact-positive-integer?]
-                    [num-cols exact-positive-integer?]) dmat?]
+                    [num-cols exact-positive-integer?]
+                    [num-rows exact-positive-integer?]) dmat?]
 
 @defproc[(dmat-data [m dmat?]) array?]
 
@@ -740,8 +737,8 @@ Two-dimensional arrays of 64-bit floating point numbers.
 @defproc[(dmat-num-cols [m dmat?]) exact-positive-integer?]
 )]
 
-@defproc[(make-dmat-data [num-rows exact-positive-integer?]
-                         [num-cols exact-positive-integer?]
+@defproc[(make-dmat-data [num-cols exact-positive-integer?]
+                         [num-rows exact-positive-integer?]
                          [x real?] ...+) array?]
 
 @defproc[(dmat-copy [m dmat?]) dmat?]
@@ -750,8 +747,8 @@ Two-dimensional arrays of 64-bit floating point numbers.
 
 @defproc*[(
 [(dmat-ref [m dmat?]
-           [row exact-nonnegative-integer?]
-           [col exact-nonnegative-integer?]) dvec?]
+           [col exact-nonnegative-integer?]
+           [row exact-nonnegative-integer?]) dvec?]
 [(dmat-ref [m dmat?] [i exact-nonnegative-integer?]) dvec?]
 )]
 
@@ -759,17 +756,17 @@ Two-dimensional arrays of 64-bit floating point numbers.
 
 @defproc[(dmat-column [m dmat?] [i exact-nonnegative-integer?]) dvec?]
 
-@defproc*[(
-[(dmat-set! [m dmat?]
-            [row exact-nonnegative-integer?]
-            [col exact-nonnegative-integer?]
-            [x real?]) void?]
-[(dmat-set! [m dmat?] [i exact-nonnegative-integer?] [x real?]) void?]
-)]
+@defproc[(dmat-set-column! [m dmat?] [i exact-nonnegative-integer?] [v dvec?]) void?]
 
 @defproc[(dmat-set-row! [m dmat?] [i exact-nonnegative-integer?] [v dvec?]) void?]
 
-@defproc[(dmat-set-column! [m dmat?] [i exact-nonnegative-integer?] [v dvec?]) void?]
+@defproc*[(
+[(dmat-set! [m dmat?]
+            [col exact-nonnegative-integer?]
+            [row exact-nonnegative-integer?]
+            [x real?]) void?]
+[(dmat-set! [m dmat?] [i exact-nonnegative-integer?] [x real?]) void?]
+)]
 
 @deftogether[(
 @defproc[(dmat->list [m dmat?]) (listof real?)]
@@ -777,15 +774,15 @@ Two-dimensional arrays of 64-bit floating point numbers.
 @defproc[(dmat-columns [m dmat?]) (listof dvec?)]
 )]
 
-@defproc[(in-dmat [m dmat?]) sequence?]
+@defproc[(in-dmat-columns [m dmat?]) sequence?]
 
 @defproc[(in-dmat-rows [m dmat?]) sequence?]
 
-@defproc[(in-dmat-columns [m dmat?]) sequence?]
+@defproc[(in-dmat [m dmat?]) sequence?]
 
 @deftogether[(
 @defform[
-  (for/dmat #:rows length-expr maybe-cols maybe-fill
+  (for/dmat maybe-cols #:rows length-expr maybe-fill
       (for-clause ...)
     body-or-break ... body)
   #:grammar ([maybe-cols (code:line)
@@ -794,22 +791,22 @@ Two-dimensional arrays of 64-bit floating point numbers.
                          (code:line #:fill length-expr)])
 ]
 @defform[
-  (for*/dmat #:rows length-expr maybe-cols maybe-fill
+  (for*/dmat maybe-cols #:rows length-expr maybe-fill
       (for-clause ...)
     body-or-break ... body)
 ]
 )]
 
 @deftogether[(
-@defproc[(dmat-predicate [m dmat?]) predicate/c]
-@defproc[(dmat-row-predicate [m dmat?]) predicate/c]
 @defproc[(dmat-column-predicate [m dmat?]) predicate/c]
+@defproc[(dmat-row-predicate [m dmat?]) predicate/c]
+@defproc[(dmat-predicate [m dmat?]) predicate/c]
 )]
 
 @deftogether[(
-@defproc[(dmat-constructor [m dmat?]) (unconstrained-domain-> dmat?)]
-@defproc[(dmat-row-constructor [m dmat?]) (unconstrained-domain-> dvec?)]
 @defproc[(dmat-column-constructor [m dmat?]) (unconstrained-domain-> dvec?)]
+@defproc[(dmat-row-constructor [m dmat?]) (unconstrained-domain-> dvec?)]
+@defproc[(dmat-constructor [m dmat?]) (unconstrained-domain-> dmat?)]
 )]
 
 @defproc[(dmat=! [m dmat?] [n dmat?]) void?]
@@ -836,9 +833,10 @@ Two-dimensional arrays of 64-bit floating point numbers.
 @defproc[(dmat--! [m dmat?]) dmat?]
 )]
 
-@defproc[(_dmat [rows exact-positive-integer?] [cols exact-positive-integer?]) ctype?]
+@defproc[(_dmat [rows exact-positive-integer?]
+                [cols exact-positive-integer?]) ctype?]
 
-@defform[(define-dmat-type id #:rows M #:cols N)]
+@defform[(define-dmat-type id #:cols N #:rows M)]
 
 @; .............................................................................
 

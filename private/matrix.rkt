@@ -22,12 +22,12 @@
                        #:c-type     _*ctype:id
                        #:ffi-vector ffi-vector:id)
   #:with  current-*vec-precision (format-id #'*vec  "current-~a-precision" #'*vec)
-  #:with        *mat-constructor (format-id #'*mat        "~a-constructor" #'*mat)
-  #:with    *mat-row-constructor (format-id #'*mat    "~a-row-constructor" #'*mat)
   #:with *mat-column-constructor (format-id #'*mat "~a-column-constructor" #'*mat)
-  #:with          *mat-predicate (format-id #'*mat          "~a-predicate" #'*mat)
-  #:with      *mat-row-predicate (format-id #'*mat      "~a-row-predicate" #'*mat)
+  #:with    *mat-row-constructor (format-id #'*mat    "~a-row-constructor" #'*mat)
+  #:with        *mat-constructor (format-id #'*mat        "~a-constructor" #'*mat)
   #:with   *mat-column-predicate (format-id #'*mat   "~a-column-predicate" #'*mat)
+  #:with      *mat-row-predicate (format-id #'*mat      "~a-row-predicate" #'*mat)
+  #:with          *mat-predicate (format-id #'*mat          "~a-predicate" #'*mat)
   #:with       _ffi-vector (format-id #'ffi-vector "_~a" #'ffi-vector)
   #:with       ffi-vector? (format-id #'ffi-vector "~a?" #'ffi-vector)
   #:with  *mat->ffi-vector (format-id #'*mat "~a->~a" #'*mat #'ffi-vector)
@@ -38,24 +38,24 @@
   #:with *mat~            (format-id #'*mat "~~~a~~"         #'*mat)
   #:with _*mat            (format-id #'*mat "_~a"            #'*mat)
   #:with *mat?            (format-id #'*mat "~a?"            #'*mat)
-  #:with *mat-num-rows    (format-id #'*mat "~a-num-rows"    #'*mat)
-  #:with *mat-num-cols    (format-id #'*mat "~a-num-cols"    #'*mat)
-  #:with *mat-copy        (format-id #'*mat "~a-copy"        #'*mat)
   #:with *mat-length      (format-id #'*mat "~a-length"      #'*mat)
-  #:with *mat-ref         (format-id #'*mat "~a-ref"         #'*mat)
-  #:with *mat-row         (format-id #'*mat "~a-row"         #'*mat)
+  #:with *mat-num-cols    (format-id #'*mat "~a-num-cols"    #'*mat)
+  #:with *mat-num-rows    (format-id #'*mat "~a-num-rows"    #'*mat)
+  #:with *mat-copy        (format-id #'*mat "~a-copy"        #'*mat)
   #:with *mat-column      (format-id #'*mat "~a-column"      #'*mat)
+  #:with *mat-row         (format-id #'*mat "~a-row"         #'*mat)
+  #:with *mat-ref         (format-id #'*mat "~a-ref"         #'*mat)
   #:with *mat-name        (format-id #'*mat "~a-name"        #'*mat)
-  #:with *mat-rows        (format-id #'*mat "~a-rows"        #'*mat)
   #:with *mat-columns     (format-id #'*mat "~a-columns"     #'*mat)
   #:with *mat-columns~    (format-id #'*mat "~~~a-columns~~" #'*mat)
-  #:with *mat-set!        (format-id #'*mat "~a-set!"        #'*mat)
-  #:with *mat-set-row!    (format-id #'*mat "~a-set-row!"    #'*mat)
+  #:with *mat-rows        (format-id #'*mat "~a-rows"        #'*mat)
   #:with *mat-set-column! (format-id #'*mat "~a-set-column!" #'*mat)
+  #:with *mat-set-row!    (format-id #'*mat "~a-set-row!"    #'*mat)
+  #:with *mat-set!        (format-id #'*mat "~a-set!"        #'*mat)
   #:with *mat->list       (format-id #'*mat "~a->list"       #'*mat)
-  #:with in-*mat          (format-id #'*mat "in-~a"          #'*mat)
-  #:with in-*mat-rows     (format-id #'*mat "in-~a-rows"     #'*mat)
   #:with in-*mat-columns  (format-id #'*mat "in-~a-columns"  #'*mat)
+  #:with in-*mat-rows     (format-id #'*mat "in-~a-rows"     #'*mat)
+  #:with in-*mat          (format-id #'*mat "in-~a"          #'*mat)
   #:with  for/*mat        (format-id #'*mat  "for/~a"        #'*mat)
   #:with for*/*mat        (format-id #'*mat "for*/~a"        #'*mat)
   #:with *mat=!           (format-id #'*mat "~a=!"           #'*mat)
@@ -126,24 +126,24 @@
   (...
    (begin
 
-     (define (_*mat rows cols) (_array (_*vec rows) cols))
+     (define (_*mat cols rows) (_array (_*vec rows) cols))
 
      (define-match-expander *mat
        (syntax-rules ()
-         [(_ #:rows rows #:cols cols x ... #:rest tail)
-          (? *mat? (and (~? (app *mat-num-rows rows))
-                        (~? (app *mat-num-cols cols))
+         [(_ #:cols cols #:rows rows x ... #:rest tail)
+          (? *mat? (and (~? (app *mat-num-cols cols))
+                        (~? (app *mat-num-rows rows))
                         (app *mat->list (list-rest x ... tail))))]
          [(_ #:rows rows x ... #:rest tail)
-          (*mat #:rows rows #:cols _ x ... #:rest tail)]
+          (*mat #:cols _ #:rows rows x ... #:rest tail)]
          [(_ #:rows rows x ...)
-          (*mat #:rows rows #:cols _ x ... #:rest (list))]
+          (*mat #:cols _ #:rows rows x ... #:rest (list))]
          [(_ #:cols cols x ... #:rest tail)
-          (*mat #:rows _ #:cols cols x ... #:rest tail)]
+          (*mat #:cols cols #:rows _ x ... #:rest tail)]
          [(_ #:cols cols x ...)
-          (*mat #:rows _ #:cols cols x ... #:rest (list))]
+          (*mat #:cols cols #:rows _ x ... #:rest (list))]
          [(_ x ... #:rest tail) (*mat #:rows _ #:cols _ x ... #:rest tail)]
-         [(_ x0 x ...) (*mat #:rows _ #:cols _ x0 x ... #:rest (list))])
+         [(_ x0 x ...) (*mat #:cols _ #:rows _ x0 x ... #:rest (list))])
        (make-rename-transformer #'*mat~))
 
      (define-match-expander *mat-columns
@@ -152,7 +152,7 @@
          [(_ v ...) #'(? *mat? (app *mat-columns (list v ...)))])
        (make-rename-transformer #'*mat-columns~))
 
-     (struct *mat (data num-rows num-cols)
+     (struct *mat (data num-cols num-rows)
        #:transparent
        #:name *glm-mat
        #:constructor-name make-*mat
@@ -172,11 +172,11 @@
           (case mode
             [(#t #f) (fprintf port "#<~a>" (*mat-name m))]
             [(1) ((if (pretty-printing) pretty-print print)
-                  `(,@(if (and (>= (*mat-num-rows m) 2) (<= (*mat-num-rows m) 4)
-                               (>= (*mat-num-cols m) 2) (<= (*mat-num-cols m) 4))
+                  `(,@(if (and (>= (*mat-num-cols m) 2) (<= (*mat-num-cols m) 4)
+                               (>= (*mat-num-rows m) 2) (<= (*mat-num-rows m) 4))
                           (list (*mat-name m))
-                          `(*mat #:rows ,(*mat-num-rows m)
-                                 #:cols ,(*mat-num-cols m)))
+                          `(*mat #:cols ,(*mat-num-cols m)
+                                 #:rows ,(*mat-num-rows m)))
                     ,@(*mat-columns m)) port mode)]
             [(0)
              (define (stringify x)
@@ -222,7 +222,7 @@
             (unless (or fill num-cols (zero? xs-rem) (<= (length as) 1))
               (raise-argument-error
                '*mat (if num-cols
-                         (format "~a component values" (* num-rows num-cols))
+                         (format "~a component values" (* num-cols num-rows))
                          (format "a multiple of ~a component values" num-rows))
                xs))
             (define N (cond [num-cols num-cols]
@@ -297,20 +297,20 @@
           (define vals (apply append (map *vec->list vs)))
           (when (null? vals)
             (if fill
-                (apply raise-arity-error 'mat (build-list (add1 (* M N)) values) as)
-                (apply raise-arity-error 'mat `(0 1 ,(* M N)) as)))
+                (apply raise-arity-error 'mat (build-list (add1 (* N M)) values) as)
+                (apply raise-arity-error 'mat `(0 1 ,(* N M)) as)))
 
-          (make-*mat (apply make-*mat-data M N vals) M N))
+          (make-*mat (apply make-*mat-data N M vals) N M))
 
         '*mat))
 
-     (define/contract (*mat-length m) (-> *mat? exact-nonnegative-integer?)
+     (define/contract (*mat-length m) (-> *mat? exact-positive-integer?)
        (*mat-num-cols m))
 
-     (define/contract (make-*mat-data rows cols . xs)
+     (define/contract (make-*mat-data cols rows . xs)
        (->* (exact-positive-integer?
              exact-positive-integer? real?) #:rest (listof real?) array?)
-       (define data (ptr-ref (malloc (_*mat rows cols) 'atomic) (_*mat rows cols) 0))
+       (define data (ptr-ref (malloc (_*mat cols rows) 'atomic) (_*mat cols rows) 0))
        (define vs (for/list ([a (in-array data)]) (make-*vec a rows #t 0)))
        (for ([x (in-list xs)]
              [k (in-naturals)])
@@ -323,7 +323,7 @@
 
      (define/contract (*mat-name m) (-> *mat? symbol?)
        (string->symbol
-        (if (= (*mat-num-rows m) (*mat-num-cols m))
+        (if (= (*mat-num-cols m) (*mat-num-rows m))
             (format "~a~a" '*mat (*mat-num-rows m))
             (format "~a~ax~a" '*mat (*mat-num-cols m) (*mat-num-rows m)))))
 
@@ -333,8 +333,8 @@
        (case-lambda
          [(m k)
           (define-values (col row) (quotient/remainder k (*mat-num-rows m)))
-          (*mat-ref m row col)]
-         [(m row col)
+          (*mat-ref m col row)]
+         [(m col row)
           (array-ref (*mat-data m) col row)]))
 
      (define/contract (*mat-row m k) (-> *mat? exact-nonnegative-integer? *vec?)
@@ -351,15 +351,15 @@
        (case-lambda
          [(m k x)
           (define-values (col row) (quotient/remainder k (*mat-num-rows m)))
-          (*mat-set! m row col x)]
-         [(m row col x)
+          (*mat-set! m col row x)]
+         [(m col row x)
           (*vec-set! (*mat-column m col) row x)]))
 
      (define/contract (*mat-set-row! m row v)
        (-> *mat? exact-nonnegative-integer? *vec? void?)
        (for ([x (in-*vec v)]
              [j (in-naturals)])
-         (*mat-set! m row j x)))
+         (*mat-set! m j row x)))
 
      (define/contract (*mat-set-column! m col v)
        (-> *mat? exact-nonnegative-integer? *vec? void?)
@@ -387,21 +387,23 @@
              _pointer
              (_ffi-vector o (* (*mat-num-cols m) (*mat-num-rows m)))))
 
-     (define/contract (in-*mat m) (-> *mat? sequence?)
-       (in-list (*mat->list m)))
+     (define/contract (in-*mat-columns m) (-> *mat? sequence?)
+       (in-list (*mat-columns m)))
 
      (define/contract (in-*mat-rows m) (-> *mat? sequence?)
        (in-list (*mat-rows m)))
 
-     (define/contract (in-*mat-columns m) (-> *mat? sequence?)
-       (in-list (*mat-columns m)))
+     (define/contract (in-*mat m) (-> *mat? sequence?)
+       (in-list (*mat->list m)))
 
-     (define-simple-macro (for/*mat #:rows rows:expr
+     (define-simple-macro (for/*mat
                               (~optional (~seq #:cols cols:expr))
+                              #:rows rows:expr
                               (~optional (~seq #:fill fill:expr))
                             (for-clause ...) body ...)
-       (apply *mat #:rows rows
+       (apply *mat
               (~? (~@ #:cols cols))
+              #:rows rows
               (~? (~@ #:fill fill))
               (let ([num-xs 0])
                 (for/list (for-clause
@@ -410,12 +412,14 @@
                   (set! num-xs (add1 num-xs))
                   body ...))))
 
-     (define-simple-macro (for*/*mat #:rows rows:expr
+     (define-simple-macro (for*/*mat
                               (~optional (~seq #:cols cols:expr))
+                              #:rows rows:expr
                               (~optional (~seq #:fill fill:expr))
                             (for-clause ...) body ...)
-       (apply *mat #:rows rows
+       (apply *mat
               (~? (~@ #:cols cols))
+              #:rows rows
               (~? (~@ #:fill fill))
               (let ([num-xs 0])
                 (for*/list (for-clause
@@ -426,8 +430,8 @@
 
      (define/contract ((*mat-predicate m) a) (-> *mat? predicate/c)
        (and (*mat? a)
-            (= (*mat-num-rows m) (*mat-num-rows a))
-            (= (*mat-num-cols m) (*mat-num-cols a))))
+            (= (*mat-num-cols m) (*mat-num-cols a))
+            (= (*mat-num-rows m) (*mat-num-rows a))))
 
      (define/contract ((*mat-row-predicate m) a) (-> *mat? predicate/c)
        (and (*vec? a) (= (*vec-length a) (*mat-num-cols m))))
@@ -437,7 +441,7 @@
 
      (define/contract (*mat-constructor m)
        (-> *mat? (unconstrained-domain-> *mat?))
-       (curry *mat #:rows (*mat-num-rows m) #:cols (*mat-num-cols m)))
+       (curry *mat #:cols (*mat-num-cols m) #:rows (*mat-num-rows m)))
 
      (define/contract (*mat-row-constructor m)
        (-> *mat? (unconstrained-domain-> *vec?))
@@ -448,12 +452,12 @@
        (curry *vec #:length (*mat-num-rows m)))
 
      (define/contract (*mat=! m1 m2) (-> *mat? *mat? void?)
-       (unless (and (= (*mat-num-rows m1) (*mat-num-rows m2))
-                    (= (*mat-num-cols m1) (*mat-num-cols m2)))
+       (unless (and (= (*mat-num-cols m1) (*mat-num-cols m2))
+                    (= (*mat-num-rows m1) (*mat-num-rows m2)))
          (error '*mat=! "matrices are not the same length"))
        (memcpy (array-ptr (*mat-data m1))
                (array-ptr (*mat-data m2))
-               (* (*mat-num-rows m1) (*mat-num-cols m1))
+               (* (*mat-num-cols m1) (*mat-num-rows m1))
                _*ctype))
 
      (define ((make-*mat-binop op-name op vec-op x0) . args)
@@ -492,10 +496,10 @@
          (unless (= (*mat-num-cols m1) (*mat-num-rows m2))
            (raise-argument-error
             '*mat* (symbol->string
-                    (*mat-name (*mat #:rows (*mat-num-rows m2)
-                                     #:cols (*mat-num-cols m1)))) m2))
-         (for*/*mat #:rows (*mat-num-rows m1)
-                    #:cols (*mat-num-cols m2)
+                    (*mat-name (*mat #:cols (*mat-num-cols m1)
+                                     #:rows (*mat-num-rows m2)))) m2))
+         (for*/*mat #:cols (*mat-num-cols m2)
+                    #:rows (*mat-num-rows m1)
              ([v-i (in-*mat-rows m1)]
               [v-j (in-*mat-columns m2)])
            (for/sum ([x (in-*vec (*vec* v-i v-j))]) x)))
@@ -519,14 +523,14 @@
            (for/sum ([x (in-*vec (*vec* v v-j))]) x)))
 
        (define (mat*scalar m x)
-         (for/*mat #:rows (*mat-num-rows m)
-                   #:cols (*mat-num-cols m)
+         (for/*mat #:cols (*mat-num-cols m)
+                   #:rows (*mat-num-rows m)
              ([m-x (in-*mat m)])
            (* m-x x)))
 
        (define (scalar*mat x m)
-         (for/*mat #:rows (*mat-num-rows m)
-                   #:cols (*mat-num-cols m)
+         (for/*mat #:cols (*mat-num-cols m)
+                   #:rows (*mat-num-rows m)
              ([m-x (in-*mat m)])
            (* x m-x)))
 
@@ -556,11 +560,13 @@
        (define (vec/mat v m)
          (*mat* v (*mat-inverse m)))
        (define (mat/scalar m x)
-         (for/*mat #:rows (*mat-num-rows m) #:cols (*mat-num-cols m)
+         (for/*mat #:cols (*mat-num-cols m)
+                   #:rows (*mat-num-rows m)
              ([m-x (in-*mat m)])
            (/ m-x x)))
        (define (scalar/mat x m)
-         (for/*mat #:rows (*mat-num-rows m) #:cols (*mat-num-cols m)
+         (for/*mat #:cols (*mat-num-cols m)
+                   #:rows (*mat-num-rows m)
              ([m-x (in-*mat m)])
            (/ x m-x)))
        (apply (case-lambda
@@ -598,34 +604,30 @@
        (*mat=! m (apply *mat/ m args)))
 
      (define/contract (++*mat! m) (-> *mat? *mat?)
-       (for/*mat
-           #:rows (*mat-num-rows m)
-           #:cols (*mat-num-cols m)
+       (for/*mat #:cols (*mat-num-cols m)
+                 #:rows (*mat-num-rows m)
            ([v (in-*mat-columns m)])
          (++*vec! v)))
 
      (define/contract (--*mat! m) (-> *mat? *mat?)
-       (for/*mat
-           #:rows (*mat-num-rows m)
-           #:cols (*mat-num-cols m)
+       (for/*mat #:cols (*mat-num-cols m)
+                 #:rows (*mat-num-rows m)
            ([v (in-*mat-columns m)])
          (--*vec! v)))
 
      (define/contract (*mat++! m) (-> *mat? *mat?)
-       (for/*mat
-           #:rows (*mat-num-rows m)
-           #:cols (*mat-num-cols m)
+       (for/*mat #:cols (*mat-num-cols m)
+                 #:rows (*mat-num-rows m)
            ([v (in-*mat-columns m)])
          (*vec++! v)))
 
      (define/contract (*mat--! m) (-> *mat? *mat?)
-       (for/*mat
-           #:rows (*mat-num-rows m)
-           #:cols (*mat-num-cols m)
+       (for/*mat #:cols (*mat-num-cols m)
+                 #:rows (*mat-num-rows m)
            ([v (in-*mat-columns m)])
          (*vec--! v)))
 
-     (define-simple-macro (define-*mat-type name:id #:rows rows:nat #:cols cols:nat)
+     (define-simple-macro (define-*mat-type name:id #:cols cols:nat #:rows rows:nat)
        #:with _name (format-id #'name  "_~a" #'name)
        #:with name? (format-id #'name  "~a?" #'name)
        #:with name* ((make-syntax-introducer) (format-id #'name "~a?" #'name))
@@ -634,8 +636,8 @@
           (define _name (_*mat rows cols))
           (define/contract (name? a) predicate/c
             (and (*mat? a)
-                 (= (*mat-num-rows a) rows)
-                 (= (*mat-num-cols a) cols)))
+                 (= (*mat-num-cols a) cols)
+                 (= (*mat-num-rows a) rows)))
           (define-match-expander name
             (syntax-rules ()
               [(_ x ... #:rest tail) (? name? (app *mat->list (list-rest x ... tail)))]
@@ -643,20 +645,20 @@
             (make-rename-transformer #'name*))
           (define/contract name*
             (-> (or/c *mat? *vec? real?) ... name?)
-            (procedure-rename (curry *mat #:rows rows #:cols cols) 'name)))))
+            (procedure-rename (curry *mat #:cols cols #:rows rows) 'name)))))
 
-     (define-*mat-type *mat2 #:rows 2 #:cols 2)
-     (define-*mat-type *mat3 #:rows 3 #:cols 3)
-     (define-*mat-type *mat4 #:rows 4 #:cols 4)
-     (define-*mat-type *mat2x2 #:rows 2 #:cols 2)
-     (define-*mat-type *mat2x3 #:rows 3 #:cols 2)
-     (define-*mat-type *mat2x4 #:rows 4 #:cols 2)
-     (define-*mat-type *mat3x2 #:rows 2 #:cols 3)
-     (define-*mat-type *mat3x3 #:rows 3 #:cols 3)
-     (define-*mat-type *mat3x4 #:rows 4 #:cols 3)
-     (define-*mat-type *mat4x2 #:rows 2 #:cols 4)
-     (define-*mat-type *mat4x3 #:rows 3 #:cols 4)
-     (define-*mat-type *mat4x4 #:rows 4 #:cols 4)
+     (define-*mat-type *mat2 #:cols 2 #:rows 2)
+     (define-*mat-type *mat3 #:cols 3 #:rows 3)
+     (define-*mat-type *mat4 #:cols 4 #:rows 4)
+     (define-*mat-type *mat2x2 #:cols 2 #:rows 2)
+     (define-*mat-type *mat2x3 #:cols 2 #:rows 3)
+     (define-*mat-type *mat2x4 #:cols 2 #:rows 4)
+     (define-*mat-type *mat3x2 #:cols 3 #:rows 2)
+     (define-*mat-type *mat3x3 #:cols 3 #:rows 3)
+     (define-*mat-type *mat3x4 #:cols 3 #:rows 4)
+     (define-*mat-type *mat4x2 #:cols 4 #:rows 2)
+     (define-*mat-type *mat4x3 #:cols 4 #:rows 3)
+     (define-*mat-type *mat4x4 #:cols 4 #:rows 4)
 
      (define/contract (*mat-inverse m) (-> *mat? *mat?)
        (define (inverse2)
@@ -739,9 +741,9 @@
                                 (*vec* Inv3 SignB)))
 
          (define Row0 (*vec4 (*mat-ref Inverse 0 0)
-                             (*mat-ref Inverse 0 1)
-                             (*mat-ref Inverse 0 2)
-                             (*mat-ref Inverse 0 3)))
+                             (*mat-ref Inverse 1 0)
+                             (*mat-ref Inverse 2 0)
+                             (*mat-ref Inverse 3 0)))
 
          (define Dot0 (*vec* (*mat-column m 0) Row0))
          (define Dot1 (for/sum ([x (in-*vec Dot0)]) x))
