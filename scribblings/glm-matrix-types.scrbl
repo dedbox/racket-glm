@@ -696,6 +696,21 @@ number of components, and each pair of consecutive @components are @racket[=].
 @defproc[(mat4x4 [a (or/c mat? vec? real?)] ...) mat4x4?]
 )]
 
+@deftogether[(
+@defthing[_mat2 ctype?]
+@defthing[_mat3 ctype?]
+@defthing[_mat4 ctype?]
+@defthing[_mat2x2 ctype?]
+@defthing[_mat2x3 ctype?]
+@defthing[_mat2x4 ctype?]
+@defthing[_mat3x2 ctype?]
+@defthing[_mat3x3 ctype?]
+@defthing[_mat3x4 ctype?]
+@defthing[_mat4x2 ctype?]
+@defthing[_mat4x3 ctype?]
+@defthing[_mat4x4 ctype?]
+)]
+
 @; =============================================================================
 
 @section[#:tag "matrix:Double_Precision_Floats"]{Double Precision Floats}
@@ -857,4 +872,19 @@ Two-dimensional arrays of 64-bit floating point numbers.
 @defproc[(dmat4x2 [a (or/c dmat? dvec? real?)] ...) dmat4x2?]
 @defproc[(dmat4x3 [a (or/c dmat? dvec? real?)] ...) dmat4x3?]
 @defproc[(dmat4x4 [a (or/c dmat? dvec? real?)] ...) dmat4x4?]
+)]
+
+@deftogether[(
+@defthing[_dmat2 ctype?]
+@defthing[_dmat3 ctype?]
+@defthing[_dmat4 ctype?]
+@defthing[_dmat2x2 ctype?]
+@defthing[_dmat2x3 ctype?]
+@defthing[_dmat2x4 ctype?]
+@defthing[_dmat3x2 ctype?]
+@defthing[_dmat3x3 ctype?]
+@defthing[_dmat3x4 ctype?]
+@defthing[_dmat4x2 ctype?]
+@defthing[_dmat4x3 ctype?]
+@defthing[_dmat4x4 ctype?]
 )]
