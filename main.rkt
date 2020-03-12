@@ -2,5 +2,5 @@
 
 (require glm/private/reprovide)
 
-(reprovide glm/matrix-types
-           glm/vector-types)
+(reprovide glm/scalar
+           glm/vector)
