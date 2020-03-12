@@ -1,6 +1,8 @@
 #lang racket/base
 
-(provide (all-defined-out))
+(provide reprovide)
 
-(define-syntax-rule (reprovide mod ...)
-  (begin (require mod ...) (provide (all-from-out mod ...))))
+(define-syntax-rule (reprovide mod-path ...)
+  (begin
+    (require mod-path ...)
+    (provide (all-from-out mod-path ...))))
