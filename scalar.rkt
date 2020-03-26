@@ -8,7 +8,7 @@
 
 (define bscalar? (or/c 0 1))
 (define bscalar (match-lambda [(or 0 #f) 0] [_ 1]))
-(define bool (match-lambda [0 #f] [1 #t]))
+(define boolean (match-lambda [0 #f] [1 #t]))
 
 (define dscalar? flonum?)
 (define (dscalar a)
