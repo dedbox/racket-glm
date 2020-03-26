@@ -12,10 +12,20 @@
 @;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @define-template[@document-vector-type-accessors[Type $ N]]{
+  @for/template[([X '(x y z w)]
+                 [R_ '(r g b a)]
+                 [S '(s t p q)]
+                 [I-th '(first second third fourth)]
+                 [_ N])]{
 
-  @for/template[([X '(x y z w)] [_ N])]{
-
+    @deftogether[(
     @defproc[($vecN-X [v $vecN?]) $scalar?]
+    @defproc[($vecN-R_ [v $vecN?]) $scalar?]
+    @defproc[($vecN-S [v $vecN?]) $scalar?]
+    )]{
 
+      Returns the I-th component of @var[v].
+
+    }
   }
 }
