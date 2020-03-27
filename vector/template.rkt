@@ -4,8 +4,7 @@
 
 (provide (all-defined-out))
 
-(for/template ([Part '(constructors accessors
-                                    ;; mutators
+(for/template ([Part '(constructors accessors mutators
                                     ;; updaters arithmetic bitwise-ops logical-ops
                        )])
   (require-template glm/vector/template/Part define-Part)
