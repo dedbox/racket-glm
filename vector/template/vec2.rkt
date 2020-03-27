@@ -1,6 +1,7 @@
 #lang template ($)
 
-(require template (for-syntax racket/base))
+(require glm/private/vector-types
+         template (for-syntax racket/base))
 
 (provide (all-defined-out))
 

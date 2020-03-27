@@ -6,6 +6,7 @@
 
 (for/template ([Part '(constructors accessors mutators
                                     ;; updaters arithmetic bitwise-ops logical-ops
+                                    additional
                        )])
   (require-template glm/vector/template/Part define-Part)
   (define-Part $ N))

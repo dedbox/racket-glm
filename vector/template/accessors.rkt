@@ -6,7 +6,10 @@
          template
          (for-syntax racket/base))
 
-(define/contract ($vecN->list v) (-> $vecN? (listof $scalar?))
-  (begin-template (list (for/template ([X (in-list '(x y z w))]
-                                       [_ (in-range N)])
-                          (tvecN-X v)))))
+(for/template ([X (in-list '(x y z w))]
+               [R (in-list '(r g b a))]
+               [S (in-list '(s t p q))]
+               [_ (in-range N)])
+  (define/contract $vecN-X (-> $vecN? $scalar?) tvecN-X)
+  (define/contract $vecN-R (-> $vecN? $scalar?) tvecN-R)
+  (define/contract $vecN-S (-> $vecN? $scalar?) tvecN-S))
