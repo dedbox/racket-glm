@@ -24,7 +24,7 @@
     @defproc[(set-$vecN-S_! [v $vecN?] [a $scalar?]) void?]
     )]{
 
-      Sets the I-th component of @var[v] to @var[a].
+      Sets the I-th component of @var[v] to @var[a], then returns @var[v].
 
     }
   }
