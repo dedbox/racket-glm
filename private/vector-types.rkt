@@ -1,6 +1,8 @@
 #lang racket/base
 
-(require template
+(require glm/scalar
+         racket/contract
+         template
          (for-syntax racket/base))
 
 (provide (all-defined-out))
@@ -18,8 +20,8 @@
                  [_ (in-range N)])
     (define tvecN-R tvecN-X)
     (define tvecN-S tvecN-X)
-    (define set-tvecN-R! set-tvecN-X!)
-    (define set-tvecN-S! set-tvecN-X!)))
+    (define/contract set-tvecN-R! (-> tvecN? tscalar? void?) set-tvecN-X!)
+    (define/contract set-tvecN-S! (-> tvecN? tscalar? void?) set-tvecN-X!)))
 
 (for/template ([N (in-list '(1 2 3 4))])
   (define-syntax (update-tvecN! stx)
