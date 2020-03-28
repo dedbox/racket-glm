@@ -6,4 +6,4 @@
 
 (require-template glm/vector/template/vec4 define-vec4)
 
-(define-vec4 b)
+(define-vec4 b + - * / =)

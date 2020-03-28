@@ -6,4 +6,4 @@
 
 (require-template glm/vector/template/vec3 define-vec3)
 
-(define-vec3 b)
+(define-vec3 b + - * / =)

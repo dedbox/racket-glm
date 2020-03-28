@@ -7,6 +7,7 @@
   "./glm-core-vector-type-additional.scrbl"
   "./glm-core-vector-type-constructors.scrbl"
   "./glm-core-vector-type-mutators.scrbl"
+  "./glm-core-vector-type-updaters.scrbl"
   template
   @for-syntax[racket/base]]
 
@@ -30,9 +31,8 @@
     @document-vector-type-constructors[Type $ N]
     @document-vector-type-accessors[Type $ N]
     @document-vector-type-mutators[Type $ N]
+    @document-vector-type-updaters[Type $ N]
     @document-vector-type-additional[Type $ N]
-
-    @subsubsection[#:tag "TypeN-Vector-Updaters"]{Updaters}
 
     @subsubsection[#:tag "TypeN-Vector-Arithmetic"]{Arithmetic}
 
