@@ -14,6 +14,16 @@
 
 @defmodule[glm/scalar]
 
+@defproc[(tscalar? [a any/c]) boolean?]{
+
+  Returns @racket[#t] if @var[a] is a scalar, @racket[#f] otherwise.
+
+  Example:
+  @example[
+(map tscalar? '(-1 0 1 2.0 z))
+  ]
+}
+
 @for/template[([$ '(b d || i u)]
                [a-T '(|a boolean| |a double| |a float| |an int| |a uint|)])]{
   @defproc[($scalar? [a any/c]) boolean?]{
