@@ -9,12 +9,17 @@
   "./glm-core-vector-type-mutators.scrbl"
   "./glm-core-vector-type-updaters.scrbl"
   template
-  @for-syntax[racket/base]]
+  @for-syntax[racket/base]
+  @for-label[racket/base racket/contract]]
 
 @;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@define-template[@document-vector-type[Type $ Name]]{
+@local-table-of-contents[]
 
+@defmodule[glm/vector]
+
+
+@define-template[@document-vector-type[Type $ Name]]{
   @section[#:style '(quiet toc)]{Name Vectors}
 
   @defmodule[glm/vector/Type]
@@ -23,7 +28,6 @@
 
   @for/template[([Length '(One Two Three Four)]
                  [N '(1 2 3 4)])]{
-
     @subsection[#:tag "$vecN-vectors"]{Length-Element Name Vectors}
 
     @defmodule[glm/vector/Type/vecN #:no-declare]
@@ -39,21 +43,11 @@
     @subsubsection[#:tag "TypeN-Vector-Bitwise-Ops"]{Bitwise Operations}
 
     @subsubsection[#:tag "TypeN-Vector-Logical-Ops"]{Logical Operations}
-
-} }
-
-@;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-@defmodule[glm/vector]
-
-@local-table-of-contents[]
+  }
+}
 
 @document-vector-type[boolean b Boolean]
-
 @document-vector-type[double d |Double-Precision Floating-Point|]
-
 @document-vector-type[float || |Single-Precision Floating-Point|]
-
 @document-vector-type[int i |Signed Integer|]
-
 @document-vector-type[uint u |Unsigned Integer|]

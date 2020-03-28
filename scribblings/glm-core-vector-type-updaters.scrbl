@@ -11,6 +11,11 @@
 
 @;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@define-template[@make-opN/c[]
+  @cond-template[
+    [(= N 1) (or/c tvec1? $scalar?)]
+    [else (or/c tvec1? tvecN? $scalar?)]]]
+
 @define-template[@document-vector-type-updaters[Type $ N]]{
   @deftogether[(
     @defproc[($vecN=! [v1 $vecN?] [v2 tvecN?]) $vecN?]
@@ -26,7 +31,9 @@
   @for/template[([□ '(+ - * /)]
                  [Op '(sum difference product quotient)])]{
     @deftogether[(
-      @defproc[($vecN□=! [v $vecN?] [a (or/c tvecN? $scalar?)]) $vecN?]
+      @defproc[($vecN□=! [v $vecN?] [a @if-template[(= N 1)
+                                       (or/c tvec1? $scalar?)
+                                       (or/c tvec1? tvecN? $scalar?)]]) $vecN?]
       @defproc[($vecN□=tvecN! [v1 $vecN?] [v2 tvecN?]) $vecN?]
       @defproc[($vecN□=$vecN! [v1 $vecN?] [v2 $vecN?]) $vecN?]
       @unless-template[(= N 1)

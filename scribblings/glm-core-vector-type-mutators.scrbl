@@ -5,7 +5,7 @@
   scribble/manual
   template
   @for-syntax[racket/base]
-  @for-label[glm racket/contract template]]
+  @for-label[glm racket/base racket/contract template]]
 
 @provide[document-vector-type-mutators]
 

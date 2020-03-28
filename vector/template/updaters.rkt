@@ -26,11 +26,11 @@
 
 (for/template ([□ (in-list '(+ - * /))]
                [⊙ (in-list '(⊕ ⊗ ⊖ ⊘))])
-  (define/contract ($vecN□=! v a) (-> $vecN? (or/c tvecN? $scalar?) $vecN?)
+  (define/contract ($vecN□=! v a)
+    (-> $vecN? (or/c (unless-template (= N 1) tvec1?) tvecN? $scalar?) $vecN?)
     ((cond [($scalar? a) $vecN□=$scalar!]
            [($vecN? a) $vecN□=$vecN!]
-           (unless-template (= N 1)
-             [(tvec1? a) $vecN□=tvec1!])
+           (unless-template (= N 1) [(tvec1? a) $vecN□=tvec1!])
            [else $vecN□=tvecN!])
      v a))
 
