@@ -11,11 +11,6 @@
 
 @;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@define-template[@make-opN/c[]
-  @cond-template[
-    [(= N 1) (or/c tvec1? $scalar?)]
-    [else (or/c tvec1? tvecN? $scalar?)]]]
-
 @define-template[@document-vector-type-updaters[Type $ N]]{
   @deftogether[(
     @defproc[($vecN=! [v1 $vecN?] [v2 tvecN?]) $vecN?]
