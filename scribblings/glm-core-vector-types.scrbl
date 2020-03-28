@@ -10,7 +10,7 @@
   "./glm-core-vector-type-updaters.scrbl"
   template
   @for-syntax[racket/base]
-  @for-label[racket/base racket/contract]]
+  @for-label[glm racket/base racket/contract]]
 
 @for/template[([N '(1 2 3 4)])
   @define[N-components @list["N " @if-template[(= N 1) "component" "components"]]]
@@ -28,6 +28,40 @@
     Returns @racket[#t] if @var[a] is a vector with @N-components, @racket[#f]
     otherwise.
 
+  }
+
+  @for/template[([X '(x y z w)]
+                 [R_ '(r g b a)]
+                 [S '(s t p q)]
+                 [I-th '(first second third fourth)]
+                 [_ N])]{
+
+    @deftogether[(
+    @defproc[(tvecN-X [v tvecN?]) tscalar?]
+    @defproc[(tvecN-R_ [v tvecN?]) tscalar?]
+    @defproc[(tvecN-S [v tvecN?]) tscalar?]
+    )]{
+
+      Returns the I-th component of @var[v].
+
+    }
+  }
+
+  @for/template[([X '(x y z w)]
+                 [R '(r g b a)]
+                 [S_ '(s t p q)]
+                 [I-th '(first second third fourth)]
+                 [_ N])]{
+
+    @deftogether[(
+    @defproc[(set-tvecN-X! [v tvecN?] [a tscalar?]) void?]
+    @defproc[(set-tvecN-R! [v tvecN?] [a tscalar?]) void?]
+    @defproc[(set-tvecN-S_! [v tvecN?] [a tscalar?]) void?]
+    )]{
+
+      Sets the I-th component of @var[v] to @var[a].
+
+    }
   }
 ]
 
