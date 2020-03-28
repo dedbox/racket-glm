@@ -12,12 +12,26 @@
   @for-syntax[racket/base]
   @for-label[racket/base racket/contract]]
 
+@for/template[([N '(1 2 3 4)])
+  @define[N-components @list["N " @if-template[(= N 1) "component" "components"]]]
+  @define[N-components. @list[@N-components "."]]]
+
 @;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @local-table-of-contents[]
 
 @defmodule[glm/vector]
 
+@for/template[([N '(1 2 3 4)])
+  @defproc[(tvecN? [a any/c]) boolean?]{
+
+    Returns @racket[#t] if @var[a] is a vector with @N-components, @racket[#f]
+    otherwise.
+
+  }
+]
+
+@;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @define-template[@document-vector-type[Type $ Name]]{
   @section[#:style '(quiet toc)]{Name Vectors}
