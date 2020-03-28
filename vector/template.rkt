@@ -9,7 +9,7 @@
  [glm/vector/template/accessors    define-accessors   ]
  [glm/vector/template/mutators     define-mutators    ]
  [glm/vector/template/updaters     define-updaters    ]
- ;; [glm/vector/template/arithmetic   define-arithmetic-ops]
+ [glm/vector/template/arithmetic   define-arithmetic-ops]
  ;; [glm/vector/template/bitwise      define-bitwise-ops   ]
  ;; [glm/vector/template/logical      define-logical-ops   ]
  [glm/vector/template/additional   define-additional-ops])
@@ -18,7 +18,7 @@
 (define-accessors $ N)
 (define-mutators $ N)
 (define-updaters $ N ⊕ ⊖ ⊗ ⊘)
-;; (define-arithmetic $ N ⊕ ⊖ ⊗ ⊘ ≗)
+(define-arithmetic-ops $ N ⊕ ⊖ ⊗ ⊘)
 ;; (define-bitwise-ops $ N ⊕ ⊖ ⊗ ⊘ ≗)
 ;; (define-logical-ops $ N ⊕ ⊖ ⊗ ⊘ ≗)
 (define-additional-ops $ N)

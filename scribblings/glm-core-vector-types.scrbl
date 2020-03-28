@@ -5,6 +5,7 @@
 @require[
   "./glm-core-vector-type-accessors.scrbl"
   "./glm-core-vector-type-additional.scrbl"
+  "./glm-core-vector-type-arithmetic.scrbl"
   "./glm-core-vector-type-constructors.scrbl"
   "./glm-core-vector-type-mutators.scrbl"
   "./glm-core-vector-type-updaters.scrbl"
@@ -84,9 +85,8 @@
     @document-vector-type-accessors[Type $ N]
     @document-vector-type-mutators[Type $ N]
     @document-vector-type-updaters[Type $ N]
+    @document-vector-type-arithmetic[Type $ N]
     @document-vector-type-additional[Type $ N]
-
-    @subsubsection[#:tag "TypeN-Vector-Arithmetic"]{Arithmetic}
 
     @subsubsection[#:tag "TypeN-Vector-Bitwise-Ops"]{Bitwise Operations}
 
