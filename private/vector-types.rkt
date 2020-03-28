@@ -20,3 +20,15 @@
     (define tvecN-S tvecN-X)
     (define set-tvecN-R! set-tvecN-X!)
     (define set-tvecN-S! set-tvecN-X!)))
+
+(for/template ([N (in-list '(1 2 3 4))])
+  (define-syntax (update-tvecN! stx)
+    (syntax-case stx ()
+      [(_ X v expr)
+       (with-syntax ([X (syntax-local-introduce #'X)]
+                     [v (syntax-local-introduce #'v)]
+                     [expr (syntax-local-introduce #'expr)])
+         (quote-template ()
+           #'(for/template ([X (in-list '(x y z w))]
+                            [_ (in-range N)])
+               (set-tvecN-X! v expr))))])))
