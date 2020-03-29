@@ -42,3 +42,19 @@
         [else 1]))
 
 (define tscalar? (or/c bscalar? dscalar? scalar? iscalar? uscalar?))
+
+(define binteger values)
+
+(define (dinteger a)
+  (cond [(integer? a) (inexact->exact a)]
+        [(real? a) (integer-bytes->integer (real->floating-point-bytes a 8) #t)]))
+
+(define (integer a)
+  (cond [(integer? a) (inexact->exact a)]
+        [(real? a) (integer-bytes->integer (real->floating-point-bytes a 4) #t)]))
+
+(define iinteger values)
+
+(define (uinteger a)
+  (cond [(negative? a) (integer-bytes->integer (integer->integer-bytes a 8) #f)]
+        [else a]))

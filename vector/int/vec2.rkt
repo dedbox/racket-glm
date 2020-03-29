@@ -1,6 +1,6 @@
 #lang racket/base
 
-(require glm/scalar template)
+(require glm/private/vector-ops glm/scalar template)
 
 (provide (all-defined-out))
 

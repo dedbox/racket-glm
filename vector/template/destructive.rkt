@@ -1,6 +1,7 @@
 #lang template ($ N ⊕ ⊗ ⊖ ⊘)
 
-(require glm/private/vector-types
+(require glm/private/vector-ops
+         glm/private/vector-types
          glm/scalar
          racket/contract
          racket/flonum
@@ -22,10 +23,10 @@
   v1)
 
 ;;; -----------------------------------------------------------------------------
-;;; Destructive Arithmetic
+;;; In-Place (Destructive) Operations
 
-(for/template ([□ (in-list '(+ - * /))]
-               [⊙ (in-list '(⊕ ⊗ ⊖ ⊘))])
+(for/template ([□ (in-list '(+ - * / % & // ^ << >>))]
+               [⊙ (in-list '(⊕ ⊗ ⊖ ⊘ $mod* $and* $or* $xor* $lshift* $rshift*))])
   (define/contract ($vecN□=! v a)
     (-> $vecN? (or/c (unless-template (= N 1) tvec1?) tvecN? $scalar?) $vecN?)
     ((cond [($scalar? a) $vecN□=$scalar!]
@@ -52,8 +53,7 @@
     (update-tvecN! X v1 ($scalar (⊙ (tvecN-X v1) ($scalar (tvecN-X v2)))))
     v1))
 
-;;; -----------------------------------------------------------------------------
-;;; Destructive Increment and Decrement
+;;; Increment and Decrement
 
 (define/contract ($vecN++! v) (-> $vecN? $vecN?)
   (update-tvecN! X v ($scalar (⊕ (tvecN-X v) ($scalar 1))))

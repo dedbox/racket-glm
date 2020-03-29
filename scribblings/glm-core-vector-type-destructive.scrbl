@@ -7,11 +7,11 @@
   @for-syntax[racket/base]
   @for-label[glm racket/contract template]]
 
-@provide[document-vector-type-updaters]
+@provide[document-vector-type-destructive]
 
 @;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@define-template[@document-vector-type-updaters[Type $ N]]{
+@define-template[@document-vector-type-destructive[Type $ N]]{
   @deftogether[(
     @defproc[($vecN=! [v1 $vecN?] [v2 tvecN?]) $vecN?]
     @defproc[($vecN=tvecN! [v1 $vecN?] [v2 tvecN?]) $vecN?]
@@ -23,8 +23,9 @@
 
   }
 
-  @for/template[([□ '(+ - * /)]
-                 [Op '(sum difference product quotient)])]{
+  @for/template[([□ '(+ - * / % & // ^ << >>)]
+                 [Op '(sum difference product quotient remainder |bitwise AND|
+                           |bitwise OR| |bitwise XOR| |left shift| |right shift|)])]{
     @deftogether[(
       @defproc[($vecN□=! [v $vecN?] [a @if-template[(= N 1)
                                        (or/c tvec1? $scalar?)
@@ -36,21 +37,22 @@
       @defproc[($vecN□=$scalar! [v $vecN?] [x $scalar?]) $vecN?]
     )]{
 
-      Updates each component of @var[v1] to the Op of itself and the
-      corresponding component of @var[v2], then returns @var[v1].
+      Updates @var[v1] with the component-wise Op of itself and either
+      @var[v2], @racket[($vecN v2)], or @racket[($vecN x)], then returns
+      @var[v1].
 
     }
   }
 
   @defproc[($vecN++! [v $vecN?]) $vecN?]{
 
-    Increments each component of @var[v], then returns @var[v].
+    Increments the components of @var[v], then returns @var[v].
 
   }
 
   @defproc[($vecN--! [v $vecN?]) $vecN?]{
 
-    Decrements each component of @var[v], then returns @var[v].
+    Decrements the components of @var[v], then returns @var[v].
 
   }
 }

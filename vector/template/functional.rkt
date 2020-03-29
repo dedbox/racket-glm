@@ -1,6 +1,7 @@
-#lang template ($ N ⊕ ⊗ ⊖ ⊘)
+#lang template ($ N ⊕ ⊗ ⊖ ⊘ ≗)
 
-(require glm/private/vector-types
+(require glm/private/vector-ops
+         glm/private/vector-types
          glm/scalar
          racket/contract
          racket/flonum
@@ -8,10 +9,10 @@
          (for-syntax racket/base))
 
 ;;; -----------------------------------------------------------------------------
-;;; Non-Destructive Arithmetic
+;;; Functional (Non-Destructive) Operations
 
-(for/template ([□ (in-list '(+ - * /))]
-               [⊙ (in-list '(⊕ ⊗ ⊖ ⊘))])
+(for/template ([□ (in-list '(+ - * / % & // ^ << >>))]
+               [⊙ (in-list '(⊕ ⊗ ⊖ ⊘ $mod* $and* $or* $xor* $lshift* $rshift*))])
   (define/contract ($vecN□ v a)
     (-> $vecN? (or/c (unless-template (= N 1) tvec1?) tvecN? $scalar?) $vecN?)
     ((cond [($scalar? a) $vecN□$scalar]
@@ -42,8 +43,21 @@
                           [_ (in-range N)])
              ($scalar (⊙ (tvecN-X v1) ($scalar (tvecN-X v2))))))))
 
-;;; -----------------------------------------------------------------------------
-;;; Non-Destructive Increment and Decrement
+;;; Bitwise Operations
+
+(define/contract ($vecN~ v) (-> $vecN? $vecN?)
+  ($vecN (for/template ([X (in-list '(x y z w))]
+                        [_ (in-range N)])
+           ($not* (tvecN-X v)))))
+
+;;; Logical Operations
+
+(define/contract ($vecN=? v1 v2) (-> $vecN? $vecN? boolean?)
+  (and (for/template ([X (in-list '(x y z w))]
+                      [_ (in-range N)])
+         (≗ (tvecN-X v1) (tvecN-X v2)))))
+
+;;; Increment and Decrement
 
 (define/contract ($vecN++ v) (-> $vecN? $vecN?)
   ($vecN (for/template ([X (in-list '(x y z w))]

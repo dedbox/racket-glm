@@ -5,10 +5,10 @@
 @require[
   "./glm-core-vector-type-accessors.scrbl"
   "./glm-core-vector-type-additional.scrbl"
-  "./glm-core-vector-type-arithmetic.scrbl"
   "./glm-core-vector-type-constructors.scrbl"
+  "./glm-core-vector-type-destructive.scrbl"
+  "./glm-core-vector-type-functional.scrbl"
   "./glm-core-vector-type-mutators.scrbl"
-  "./glm-core-vector-type-updaters.scrbl"
   template
   @for-syntax[racket/base]
   @for-label[glm racket/base racket/contract]]
@@ -68,7 +68,12 @@
 
 @;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@define-template[@document-vector-type[Type $ Name]]{
+@for/template[([Type '(boolean double float int uint)]
+               [$ '(b d || i u)]
+               [Name '(Boolean |Double-Precision Floating-Point|
+                               |Single-Precision Floating-Point|
+                               |Signed Integer|
+                               |Unsigned Integer|)])]{
   @section[#:style '(quiet toc)]{Name Vectors}
 
   @defmodule[glm/vector/Type]
@@ -84,18 +89,8 @@
     @document-vector-type-constructors[Type $ N]
     @document-vector-type-accessors[Type $ N]
     @document-vector-type-mutators[Type $ N]
-    @document-vector-type-updaters[Type $ N]
-    @document-vector-type-arithmetic[Type $ N]
+    @document-vector-type-destructive[Type $ N]
+    @document-vector-type-functional[Type $ N]
     @document-vector-type-additional[Type $ N]
-
-    @subsubsection[#:tag "TypeN-Vector-Bitwise-Ops"]{Bitwise Operations}
-
-    @subsubsection[#:tag "TypeN-Vector-Logical-Ops"]{Logical Operations}
   }
 }
-
-@document-vector-type[boolean b Boolean]
-@document-vector-type[double d |Double-Precision Floating-Point|]
-@document-vector-type[float || |Single-Precision Floating-Point|]
-@document-vector-type[int i |Signed Integer|]
-@document-vector-type[uint u |Unsigned Integer|]

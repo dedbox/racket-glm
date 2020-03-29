@@ -1,6 +1,6 @@
 #lang racket/base
 
-(require glm/scalar racket/flonum template)
+(require glm/private/vector-ops glm/scalar racket/flonum template)
 
 (provide (all-defined-out))
 
