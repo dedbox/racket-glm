@@ -3,88 +3,82 @@
 (require glm/private/vector-types
          glm/scalar
          racket/contract
+         racket/match
          (for-syntax racket/base))
 
 (cond-template
   [(= N 1)
-   (struct $vec1 tvec1 ()
-     #:transparent
-     #:name glm-$vec1
-     #:constructor-name make-$vec1)
-
-   (define/contract $vec1 (case-> (-> $vec1?) (-> any/c $vec1?))
+   (define/contract $vec1 (case-> (-> $vec1?)
+                                  (-> targ? $vec1?))
      (case-lambda
        [() (make-$vec1 ($scalar 0))]
        [(a) (make-$vec1 (cond [($scalar? a) a]
                               [($vec1? a) (tvec1-x a)]
+                              [(number? a) ($scalar a)]
                               [(tvec1? a) ($scalar (tvec1-x a))]
                               [(tvec2? a) ($scalar (tvec2-x a))]
                               [(tvec3? a) ($scalar (tvec3-x a))]
-                              [(tvec4? a) ($scalar (tvec4-x a))]
-                              [else ($scalar a)]))]))]
+                              [(tvec4? a) ($scalar (tvec4-x a))]))]))]
 
   [(= N 2)
-   (struct $vec2 tvec2 ()
-     #:transparent
-     #:name glm-$vec2
-     #:constructor-name make-$vec2)
-
    (define/contract $vec2 (case-> (-> $vec2?)
-                                  (-> any/c $vec2?)
-                                  (-> any/c any/c $vec2?))
+                                  (-> targ? $vec2?)
+                                  (-> targ? targ? $vec2?))
      (case-lambda
        [() (make-$vec2 ($scalar 0) ($scalar 0))]
        [(a)
-        (apply make-$vec2
-               (cond [($scalar? a) (list a a)]
-                     [($vec2? a) (list (tvec2-x a) (tvec2-y a))]
-                     [(tvec1? a) (list ($scalar (tvec1-x a)) ($scalar (tvec1-x a)))]
-                     [(tvec2? a) (list ($scalar (tvec2-x a)) ($scalar (tvec2-y a)))]
-                     [(tvec3? a) (list ($scalar (tvec3-x a)) ($scalar (tvec3-y a)))]
-                     [(tvec4? a) (list ($scalar (tvec4-x a)) ($scalar (tvec4-y a)))]
-                     [else (list ($scalar a) ($scalar a))]))]
+        (cond
+          [($scalar? a) (make-$vec2 a a)]
+          [($vec1? a) (make-$vec2 (tvec1-x a) (tvec1-x a))]
+          [($vec2? a) (make-$vec2 (tvec2-x a) (tvec2-y a))]
+          [(number? a) (let ([x ($scalar a)]) (make-$vec2 x x))]
+          [(tvec1? a) (let ([x ($scalar (tvec1-x a))]) (make-$vec2 x x))]
+          [(tvec2? a) (make-$vec2 ($scalar (tvec2-x a)) ($scalar (tvec2-y a)))])]
        [(a b)
-        (apply make-$vec2
-               (cond [(and ($scalar? a) ($scalar? b)) (list a b)]
-                     [(and (tvec1? a) (tvec1? b)) (list ($scalar (tvec1-x a))
-                                                        ($scalar (tvec1-x b)))]
-                     [(tvec1? a) (list ($scalar (tvec1-x a)) ($scalar b))]
-                     [(tvec1? b) (list ($scalar a) ($scalar (tvec1-x b)))]
-                     [else (list ($scalar a) ($scalar b))]))]))]
+        (match* (a b)
+          (for/template
+              ([P? (in-list '($scalar? $vec1? number? tvec1?))]
+               [x1 (in-list '(a (tvec1-x a) ($scalar a) ($scalar (tvec1-x a))))])
+            (for/template
+                ([Q? (in-list '($scalar? $vec1? number? tvec1?))]
+                 [x2 (in-list '(b (tvec1-x b) ($scalar b) ($scalar (tvec1-x b))))])
+              [((? P?) (? Q?)) (make-$vec2 x1 x2)])))]))]
 
   [(= N 3)
-   (struct $vec3 tvec3 ()
-     #:transparent
-     #:name glm-$vec3
-     #:constructor-name make-$vec3)
-
    (define/contract $vec3 (case-> (-> $vec3?)
-                                  (-> any/c $vec3?)
-                                  (-> any/c any/c $vec3?)
-                                  (-> any/c any/c any/c $vec3?))
+                                  (-> targ? $vec3?)
+                                  (-> targ? targ? $vec3?)
+                                  (-> targ? targ? targ? $vec3?))
      (case-lambda
        [() (apply make-$vec3 (build-list 3 (λ _ ($scalar 0))))]
        [(a)
-        (apply
-         make-$vec3
-         (cond [($scalar? a) (list a a a)]
-               [($vec3? a) (list (tvec3-x a) (tvec3-y a) (tvec3-z a))]
-               [(tvec1? a) (build-list 3 (λ _ ($scalar (tvec1-x a))))]
-               [(tvec3? a) (map $scalar (list (tvec3-x a) (tvec3-y a) (tvec3-z a)))]
-               [(tvec4? a) (map $scalar (list (tvec4-x a) (tvec4-y a) (tvec4-z a)))]
-               [else (list ($scalar a) ($scalar a) ($scalar a))]))]
+        (cond
+          [($scalar? a) (make-$vec3 a a a)]
+          [($vec3? a) (make-$vec3 (tvec3-x a) (tvec3-y a) (tvec3-z a))]
+          [(number? a) (let ([x ($scalar a)] (make-$vec3 x x x)))]
+          [(tvec1? a) (let ([x ($scalar (tvec1-x a))]) (make-$vec3 x x x))]
+          [(tvec3? a) (make-$vec3 ($scalar (tvec3-x a))
+                                  ($scalar (tvec3-y a))
+                                  ($scalar (tvec3-z a)))]
+          [(tvec4? a) (make-$vec3 ($scalar (tvec4-x a))
+                                  ($scalar (tvec4-y a))
+                                  ($scalar (tvec4-z a)))]
+          [else (raise-arguments-error
+                 '$vec3 "cannot convert one argument into three $scalars"
+                 "arguments" (list a))])]
        [(a b)
-        (apply
-         make-$vec3
-         (cond [(and (tvec2? a) (tvec1? b))
-                (map $scalar (list (tvec2-x a) (tvec2-y a) (tvec1-x b)))]
-               [(and (tvec1? a) (tvec2? b))
-                (map $scalar (list (tvec1-x a) (tvec2-x b) (tvec2-x b)))]
-               [(tvec2? a) (map $scalar (list (tvec2-x a) (tvec2-y a) b))]
-               [(tvec2? b) (map $scalar (list a (tvec2-x b) (tvec2-y b)))]
-               [else (raise-arguments-error
-                      '$vec3 "cannot convert two arguments into three $scalars"
-                      "args" (list a b))]))]
+        ()
+
+        (cond
+          [(and (tvec2? a) (tvec1? b))
+               (map $scalar (list (tvec2-x a) (tvec2-y a) (tvec1-x b)))]
+              [(and (tvec1? a) (tvec2? b))
+               (map $scalar (list (tvec1-x a) (tvec2-x b) (tvec2-x b)))]
+              [(tvec2? a) (map $scalar (list (tvec2-x a) (tvec2-y a) b))]
+              [(tvec2? b) (map $scalar (list a (tvec2-x b) (tvec2-y b)))]
+              [else (raise-arguments-error
+                     '$vec3 "cannot convert two arguments into three $scalars"
+                     "arguments" (list a b))])]
        [(a b c)
         (apply
          make-$vec3
@@ -100,26 +94,20 @@
            [else (map $scalar (list a b c))]))]))]
 
   [(= N 4)
-   (struct $vec4 tvec4 ()
-     #:transparent
-     #:name glm-$vec4
-     #:constructor-name make-$vec4)
-
    (define/contract $vec4 (case-> (-> $vec4?)
-                                  (-> any/c $vec4?)
-                                  (-> any/c any/c $vec4?)
-                                  (-> any/c any/c any/c $vec4?)
-                                  (-> any/c any/c any/c any/c $vec4?))
+                                  (-> targ? $vec4?)
+                                  (-> targ? targ? $vec4?)
+                                  (-> targ? targ? targ? $vec4?)
+                                  (-> targ? targ? targ? targ? $vec4?))
      (case-lambda
        [() (apply make-$vec4 (build-list 4 (λ _ ($scalar 0))))]
        [(a)
-        (apply
-         make-$vec4
-         (cond [($scalar? a) (list a a a a)]
-               [($vec4? a) (list (tvec4-x a) (tvec4-y a) (tvec4-z a) (tvec4-w a))]
-               [(tvec1? a) (build-list 4 (λ _ ($scalar (tvec1-x a))))]
-               [(tvec4? a) (map $scalar (list (tvec4-x a) (tvec4-y a) (tvec4-z a)))]
-               [else (build-list 4 (λ _ ($scalar a)))]))]
+        (cond
+          [($scalar? a) (list a a a a)]
+          [($vec4? a) (list (tvec4-x a) (tvec4-y a) (tvec4-z a) (tvec4-w a))]
+          [(tvec1? a) (build-list 4 (λ _ ($scalar (tvec1-x a))))]
+          [(tvec4? a) (map $scalar (list (tvec4-x a) (tvec4-y a) (tvec4-z a)))]
+          [else (build-list 4 (λ _ ($scalar a)))])]
        [(a b)
         (apply
          make-$vec4
