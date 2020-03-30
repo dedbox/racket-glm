@@ -1,8 +1,8 @@
 #lang racket/base
 
-(require glm/private/vector-ops glm/scalar template)
+(require glm/private/vector-ops glm/private/vector-types glm/scalar template)
 
-(provide (all-defined-out))
+(provide (all-defined-out) bvec3?)
 
 (require-templates
  [glm/vector/template/vec3    define-vec3]

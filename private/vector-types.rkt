@@ -34,3 +34,12 @@
            #'(for/template ([X (in-list '(x y z w))]
                             [_ (in-range N)])
                (set-tvecN-X! v expr))))])))
+
+(for*/template ([$ (in-list '(b d || i u))]
+                [N (in-list '(1 2 3 4))])
+  (struct $vecN tvecN ()
+    #:transparent
+    #:name glm-$vecN
+    #:constructor-name make-$vecN))
+
+(define targ? (or/c number? tscalar? tvec?))
