@@ -1,10 +1,9 @@
 #lang racket/base
 
-(require glm/vector template (for-syntax racket/base))
+(require glm/vector)
 
 (module+ test
-  (require glm/private/testing
-           glm/scalar)
+  (require glm/private/testing glm/scalar template (for-syntax racket/base))
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

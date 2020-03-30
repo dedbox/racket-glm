@@ -1,9 +1,13 @@
 #lang racket/base
 
-(require glm/private/vector-ops glm/private/vector-types glm/scalar template)
+(require glm/private/vector-ops
+         glm/private/vector-types
+         glm/scalar
+         racket/fixnum
+         template)
 
 (provide (all-defined-out) uvec4?)
 
 (require-template glm/vector/template/vec4 define-vec4)
 
-(define-vec4 u + - * / =)
+(define-vec4 u fx+ fx- fx* fxquotient fx=)

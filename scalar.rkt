@@ -1,57 +1,68 @@
 #lang racket/base
 
 (require racket/bool
-         racket/contract/base
-         racket/match)
+         racket/contract
+         racket/function
+         racket/flonum)
 
 (provide (all-defined-out))
 
-(define bscalar? (or/c 0 1))
-(define bscalar (match-lambda [(or 0 #f) 0] [_ 1]))
-(define boolean (match-lambda [0 #f] [1 #t]))
+(define (tscalar? a) ((disjoin bscalar? dscalar? scalar? iscalar? uscalar?) a))
+(define (bscalar? a) (and (real? a) (or (= a 0) (= a 1))))
+(define (dscalar? a) (flonum? a))
+(define  (scalar? a) (flonum? a))
+(define (iscalar? a) (fixnum? a))
+(define (uscalar? a) (and (fixnum? a) (not (negative? a))))
 
-(define dscalar? flonum?)
-(define (dscalar a)
+(define (fraction? a)
+  (and (rational? a) (exact? a) (not (integer? a))))
+
+(define (boolean x) (case x [(0 #f) #f] [else #t]))
+
+(define/contract (bscalar a) (-> (or/c fixnum? flonum? fraction? boolean?) bscalar?)
+  (case a [(0 #f) 0] [else 1]))
+
+(define/contract (dscalar a) (-> (or/c fixnum? flonum? fraction? boolean?) dscalar?)
   (real->double-flonum
-   (cond [(false? a) 0]
-         [ (real? a) a]
-         [   else    1])))
+   (cond [(flonum? a) a]
+         [(fixnum? a) (->fl a)]
+         [(fraction? a) (->fl a)]
+         [(boolean? a) (bscalar a)])))
 
-(define scalar? flonum?)
-(define (scalar a)
+(define/contract (scalar a) (-> (or/c fixnum? flonum? fraction? boolean?) scalar?)
   (real->double-flonum
-   (cond [(false? a) 0]
-         [ (real? a) a]
-         [   else    1])))
+   (cond [(flonum? a) a]
+         [(fixnum? (->fl a))]
+         [(fraction? a) (->fl a)]
+         [(boolean? a) (bscalar a)])))
 
-(define iscalar? exact-integer?)
-(define (iscalar a)
-  (cond [(false? a) 0]
-        [(exact-integer? a) a]
-        [(integer? a) (inexact->exact a)]
-        [(real? a) (inexact->exact (truncate a))]
-        [else 1]))
+(define/contract (iscalar a) (-> (or/c fixnum? flonum? fraction? boolean?) iscalar?)
+  (cond [(fixnum? a) a]
+        [(flonum? a) (fl->exact-integer (truncate a))]
+        [(fraction? a) (fl->exact-integer (truncate (exact->inexact a)))]
+        [(boolean? a) (bscalar a)]))
 
-(define uscalar? exact-nonnegative-integer?)
-(define (uscalar a)
-  (cond [(false? a) 0]
-        [(exact-nonnegative-integer? a) a]
-        [(and (integer? a) (not (negative? a))) (inexact->exact a)]
-        [(real? a) (define n (inexact->exact (truncate a)))
-                   (integer-bytes->integer (integer->integer-bytes n 4 #t) #f)]
-        [else 1]))
+(define/contract (uscalar a) (-> (or/c fixnum? flonum? fraction? boolean?) iscalar?)
+  (cond [(fixnum? a) ((if (negative? a) unsign values) a)]
+        [(flonum? a) ((if (negative? a) unsign values) (fl->exact-integer (truncate a)))]
+        [(fraction? a) ((if (negative? a) unsign values)
+                        (fl->exact-integer (truncate (exact->inexact a))))]
+        [(boolean? a) (bscalar a)]))
 
-(define tscalar? (or/c bscalar? dscalar? scalar? iscalar? uscalar?))
+(define (unsign z)
+  (integer-bytes->integer
+   (integer->integer-bytes (bitwise-and #x3fffffffffffffff z) 8 #t)
+   #f))
 
 (define binteger values)
 
 (define (dinteger a)
-  (cond [(integer? a) (inexact->exact a)]
+  (cond [(integer? a) (fl->exact-integer a)]
         [(real? a) (integer-bytes->integer (real->floating-point-bytes a 8) #t)]))
 
 (define (integer a)
-  (cond [(integer? a) (inexact->exact a)]
-        [(real? a) (integer-bytes->integer (real->floating-point-bytes a 4) #t)]))
+  (cond [(integer? a) (fl->exact-integer a)]
+        [(real? a) (integer-bytes->integer (real->floating-point-bytes a 8) #t)]))
 
 (define iinteger values)
 

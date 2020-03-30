@@ -4,6 +4,7 @@
          glm/private/vector-types
          glm/scalar
          racket/contract
+         racket/fixnum
          racket/flonum
          template
          (for-syntax racket/base))
