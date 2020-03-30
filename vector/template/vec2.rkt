@@ -1,9 +1,6 @@
 #lang template ($ ⊕ ⊖ ⊗ ⊘ ≗)
 
-(require glm/private/vector-types
-         template (for-syntax racket/base))
-
-(provide (all-defined-out))
+(require glm/private/vector-types template (for-syntax racket/base))
 
 (require-template glm/vector/template define-vector-type)
 
