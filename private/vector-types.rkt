@@ -2,6 +2,7 @@
 
 (require glm/scalar
          racket/contract
+         racket/list
          template
          (for-syntax racket/base))
 
@@ -43,3 +44,22 @@
     #:constructor-name make-$vecN))
 
 (define targ? (or/c number? tscalar? tvec?))
+
+(for/template ([$ (in-list '(b d || i u))])
+  (define (args->$scalars as)
+    (define (arg->scalars a)
+      (cond [($scalar? a) (list a)]
+            [(number? a) (list ($scalar a))]
+            [(tvec1? a) (list ($scalar (tvec1-x a)))]
+            [(tvec2? a) (list ($scalar (tvec2-x a))
+                              ($scalar (tvec2-y a)))]
+            [(tvec3? a) (list ($scalar (tvec3-x a))
+                              ($scalar (tvec3-y a))
+                              ($scalar (tvec3-z a)))]
+            [(tvec4? a) (list ($scalar (tvec4-x a))
+                              ($scalar (tvec4-y a))
+                              ($scalar (tvec4-z a))
+                              ($scalar (tvec4-w a)))]))
+    (cond [(null? as) (list ($scalar 0))]
+          [(null? (cdr as)) (arg->scalars (car as))]
+          [else (flatten (map arg->scalars as))])))

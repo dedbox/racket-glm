@@ -154,97 +154,84 @@
                    [$ '(b d || i u)])
 
       (test-suite "T"
-        (for/template ([N '(1 2 3 4)])
+        (test-suite "$vec1"
+          (test-case "no args" (check-$vec1/0))
+          (test-suite "one arg"
+            (test-case "scalar" (check-$vec1/scalar))
+            (test-case "vec1" (check-$vec1/vec1))
+            (test-case "vec2" (check-$vec1/vec2))
+            (test-case "vec3" (check-$vec1/vec3))
+            (test-case "vec4" (check-$vec1/vec4))))
 
-          (test-suite "$vecN"
-            (test-case "no args" (check-$vecN/0))
+        (test-suite "$vec2"
+          (test-case "no args" (check-$vec2/0))
+          (test-suite "one arg"
+            (test-case "scalar" (check-$vec2/scalar))
+            (test-case "vec1" (check-$vec2/vec1))
+            (test-case "vec2" (check-$vec2/vec2))
+            (test-case "vec3" (check-$vec2/vec3))
+            (test-case "vec4" (check-$vec2/vec4)))
 
-            (cond-template
+          (test-suite "two args"
+            (for*/template ([A '(scalar vec1)]
+                            [B '(scalar vec1)])
+              (test-case "A+B" (check-$vec2/A+B)))))
 
-              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        (test-suite "$vec3"
+          (test-case "no args" (check-$vec3/0))
+          (test-suite "one arg"
+            (test-case "scalar" (check-$vec3/scalar))
+            (test-case "vec1" (check-$vec3/vec1))
+            (test-case "vec3" (check-$vec3/vec3))
+            (test-case "vec4" (check-$vec3/vec4)))
+          (test-suite "two args"
+            (for/template ([A '(scalar vec1 vec2)]
+                           [I '(1 1 2)])
+              (for/template ([B '(scalar vec1 vec2)]
+                             [J '(1 1 2)])
+                (when-template (= (+ I J) 3)
+                  (test-case "A+B" (check-$vec3/A+B))))))
+          (test-suite "three args"
+            (for/template ([A '(scalar vec1 vec2)]
+                           [I '(1 1 2)])
+              (for/template ([B '(scalar vec1 vec2)]
+                             [J '(1 1 2)])
+                (for/template ([C '(scalar vec1 vec2)]
+                               [K '(1 1 2)])
+                  (when-template (= (+ I J K) 3)
+                    (test-case "A+B+C" (check-$vec3/A+B+C))))))))
 
-              [(= N 1)
-               (test-suite "one arg"
-                 (test-case "scalar" (check-$vec1/scalar))
-                 (test-case "vec1" (check-$vec1/vec1))
-                 (test-case "vec2" (check-$vec1/vec2))
-                 (test-case "vec3" (check-$vec1/vec3))
-                 (test-case "vec4" (check-$vec1/vec4)))]
+        (test-suite "$vec4"
+          (test-case "no args" (check-$vec4/0))
+          (test-suite "one arg"
+            (test-case "scalar" (check-$vec4/scalar))
+            (test-case "vec1" (check-$vec4/vec1))
+            (test-case "vec4" (check-$vec4/vec4)))
 
-              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+          (test-suite "two args"
+            (for/template ([A '(scalar vec1 vec2 vec3)]
+                           [I '(1 1 2 3)])
+              (for/template ([B '(scalar vec1 vec2 vec3)]
+                             [J '(1 1 2 3)])
+                (when-template (= (+ I J) 4)
+                  (test-case "A+B" (check-$vec4/A+B))))))
 
-              [(= N 2)
-               (test-suite "one arg"
-                 (test-case "scalar" (check-$vec2/scalar))
-                 (test-case "vec1" (check-$vec2/vec1))
-                 (test-case "vec2" (check-$vec2/vec2))
-                 (test-case "vec3" (check-$vec2/vec3))
-                 (test-case "vec4" (check-$vec2/vec4)))
+          (test-suite "three args"
+            (for/template ([A '(scalar vec1 vec2)]
+                           [I '(1 1 2)])
+              (for/template ([B '(scalar vec1 vec2)]
+                             [J '(1 1 2)])
+                (for/template ([C '(scalar vec1 vec2)]
+                               [K '(1 1 2)])
+                  (when-template (= (+ I J K) 4)
+                    (test-case "A+B+C" (check-$vec4/A+B+C)))))))
 
-               (test-suite "two args"
-                 (for*/template ([A '(scalar vec1)]
-                                 [B '(scalar vec1)])
-                   (test-case "A+B" (check-$vec2/A+B))))]
-
-              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-              [(= N 3)
-               (test-suite "one arg"
-                 (test-case "scalar" (check-$vec3/scalar))
-                 (test-case "vec1" (check-$vec3/vec1))
-                 (test-case "vec3" (check-$vec3/vec3))
-                 (test-case "vec4" (check-$vec3/vec4)))
-
-               (test-suite "two args"
-                 (for/template ([A '(scalar vec1 vec2)]
-                                [I '(1 1 2)])
-                   (for/template ([B '(scalar vec1 vec2)]
-                                  [J '(1 1 2)])
-                     (when-template (= (+ I J) 3)
-                       (test-case "A+B" (check-$vec3/A+B))))))
-
-               (test-suite "three args"
-                 (for/template ([A '(scalar vec1 vec2)]
-                                [I '(1 1 2)])
-                   (for/template ([B '(scalar vec1 vec2)]
-                                  [J '(1 1 2)])
-                     (for/template ([C '(scalar vec1 vec2)]
-                                    [K '(1 1 2)])
-                       (when-template (= (+ I J K) 3)
-                         (test-case "A+B+C" (check-$vec3/A+B+C)))))))]
-
-              ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-              [(= N 4)
-               (test-suite "one arg"
-                 (test-case "scalar" (check-$vec4/scalar))
-                 (test-case "vec1" (check-$vec4/vec1))
-                 (test-case "vec4" (check-$vec4/vec4)))
-
-               (test-suite "two args"
-                 (for/template ([A '(scalar vec1 vec2 vec3)]
-                                [I '(1 1 2 3)])
-                   (for/template ([B '(scalar vec1 vec2 vec3)]
-                                  [J '(1 1 2 3)])
-                     (when-template (= (+ I J) 4)
-                       (test-case "A+B" (check-$vec4/A+B))))))
-
-               (test-suite "three args"
-                 (for/template ([A '(scalar vec1 vec2)]
-                                [I '(1 1 2)])
-                   (for/template ([B '(scalar vec1 vec2)]
-                                  [J '(1 1 2)])
-                     (for/template ([C '(scalar vec1 vec2)]
-                                    [K '(1 1 2)])
-                       (when-template (= (+ I J K) 4)
-                         (test-case "A+B+C" (check-$vec4/A+B+C)))))))
-
-               (test-suite "four args"
-                 (for*/template ([A '(scalar vec1)]
-                                 [B '(scalar vec1)]
-                                 [C '(scalar vec1)]
-                                 [D '(scalar vec1)])
-                   (test-case "A+B+C+D" (check-$vec4/A+B+C+D))))]))))))
+          (test-suite "four args"
+            (for*/template ([A '(scalar vec1)]
+                            [B '(scalar vec1)]
+                            [C '(scalar vec1)]
+                            [D '(scalar vec1)])
+              (test-case "A+B+C+D" (check-$vec4/A+B+C+D))))))))
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
