@@ -20,7 +20,7 @@
 
   Example:
   @example[
-(map tscalar? '(-1 0 1 2.0 z))
+(map tscalar? '(-1 0 1 2.0))
   ]
 }
 
@@ -32,7 +32,7 @@
 
     Example:
     @example[
-(map $scalar? '(-1 0 1 2.0 z))
+(map $scalar? '(-1 0 1 2.0))
     ]
   }
 
@@ -42,7 +42,7 @@
 
     Example:
     @example[
-(map $scalar '(-1 0 1 2.0 z))
+(map $scalar '(-1 0 1 2.0))
     ]
   }
 }
