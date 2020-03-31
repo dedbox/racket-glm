@@ -19,7 +19,7 @@
 (define (boolean x) (case x [(0 #f) #f] [else #t]))
 
 (define/contract (bscalar a) (-> (or/c fixnum? flonum? fraction? boolean?) bscalar?)
-  (case a [(0 #f) 0] [else 1]))
+  (if ((conjoin number? (disjoin zero? negative? false?)) a) 0 1))
 
 (define/contract (dscalar a) (-> (or/c fixnum? flonum? fraction? boolean?) dscalar?)
   (real->double-flonum
