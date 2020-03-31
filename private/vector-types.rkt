@@ -36,7 +36,7 @@
                             [_ (in-range N)])
                (set-tvecN-X! v expr))))])))
 
-(for*/template ([$ (in-list '(b d || i u))]
+(for*/template ([$ (in-list '(b d i u))]
                 [N (in-list '(1 2 3 4))])
   (struct $vecN tvecN ()
     #:transparent
@@ -45,7 +45,7 @@
 
 (define targ? (or/c number? tscalar? tvec?))
 
-(for/template ([$ (in-list '(b d || i u))])
+(for/template ([$ (in-list '(b d i u))])
   (define (args->$scalars as)
     (define (arg->scalars a)
       (cond [($scalar? a) (list a)]

@@ -7,10 +7,9 @@
 
 (provide (all-defined-out))
 
-(define (tscalar? a) ((disjoin bscalar? dscalar? scalar? iscalar? uscalar?) a))
+(define (tscalar? a) ((disjoin bscalar? dscalar? iscalar? uscalar?) a))
 (define (bscalar? a) (and (real? a) (or (= a 0) (= a 1))))
 (define (dscalar? a) (flonum? a))
-(define  (scalar? a) (flonum? a))
 (define (iscalar? a) (fixnum? a))
 (define (uscalar? a) (and (fixnum? a) (not (negative? a))))
 
@@ -26,13 +25,6 @@
   (real->double-flonum
    (cond [(flonum? a) a]
          [(fixnum? a) (->fl a)]
-         [(fraction? a) (->fl a)]
-         [(boolean? a) (bscalar a)])))
-
-(define/contract (scalar a) (-> (or/c fixnum? flonum? fraction? boolean?) scalar?)
-  (real->double-flonum
-   (cond [(flonum? a) a]
-         [(fixnum? (->fl a))]
          [(fraction? a) (->fl a)]
          [(boolean? a) (bscalar a)])))
 
@@ -57,10 +49,6 @@
 (define binteger values)
 
 (define (dinteger a)
-  (cond [(integer? a) (fl->exact-integer a)]
-        [(real? a) (integer-bytes->integer (real->floating-point-bytes a 8) #t)]))
-
-(define (integer a)
   (cond [(integer? a) (fl->exact-integer a)]
         [(real? a) (integer-bytes->integer (real->floating-point-bytes a 8) #t)]))
 

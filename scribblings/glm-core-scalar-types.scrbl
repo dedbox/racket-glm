@@ -24,8 +24,8 @@
   ]
 }
 
-@for/template[([$ '(b d || i u)]
-               [a-T '(|a boolean| |a double| |a float| |an int| |a uint|)])]{
+@for/template[([$ '(b d i u)]
+               [a-T '(|a boolean| |a double| |an int| |a uint|)])]{
   @defproc[($scalar? [a any/c]) boolean?]{
 
     Returns @racket[#t] if @var[a] is a-T scalar, @racket[#f] otherwise.

@@ -7,7 +7,7 @@
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (for*/template ([$ '(b d || i u)]
+  (for*/template ([$ '(b d i u)]
                   [N '(1 2 3 4)])
 
     (define-syntax-rule (check-$vecN/0)
@@ -150,7 +150,7 @@
 
   (define-tests "constructors"
     (for/template ([T '(boolean double float int uint)]
-                   [$ '(b d || i u)])
+                   [$ '(b d i u)])
 
       (test-suite "T"
         (test-suite "$vec1"

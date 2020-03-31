@@ -9,7 +9,7 @@
 
   (define-tests "mutators"
     (for/template ([T '(boolean double float int uint)]
-                   [$ '(b d || i u)])
+                   [$ '(b d i u)])
       (test-suite "T"
         (for/template ([N '(1 2 3 4)])
           (test-suite "$vecN"

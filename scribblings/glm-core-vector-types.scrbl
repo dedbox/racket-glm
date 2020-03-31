@@ -68,10 +68,9 @@
 
 @;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@for/template[([Type '(boolean double float int uint)]
-               [$ '(b d || i u)]
+@for/template[([Type '(boolean double int uint)]
+               [$ '(b d i u)]
                [Name '(Boolean |Double-Precision Floating-Point|
-                               |Single-Precision Floating-Point|
                                |Signed Integer|
                                |Unsigned Integer|)])]{
   @section[#:style '(quiet toc)]{Name Vectors}
