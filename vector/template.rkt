@@ -2,8 +2,6 @@
 
 (require glm/scalar template (for-syntax racket/base))
 
-(provide (all-defined-out))
-
 (require-templates
  [glm/vector/template/constructors define-constructors]
  [glm/vector/template/accessors    define-accessors   ]
